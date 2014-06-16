@@ -10,7 +10,7 @@ object SdkBuild extends Build {
     autoScalaLibrary := false,
     crossPaths := false
   )
-
+  
   lazy val sdk = Project(
     id = "sdk-java",
     base = file("."),
@@ -19,7 +19,18 @@ object SdkBuild extends Build {
         "org.apache.httpcomponents" % "httpclient" % "4.2.1",
         "org.restlet.jse" % "org.restlet.ext.jackson" % "2.1.2",
         "org.restlet.jse" % "org.restlet.ext.httpclient" % "2.1.2"
-      )
+      ),
+      publishMavenStyle := true,
+      publishTo <<= isSnapshot { isSnapshot =>
+        val nexus = "https://oss.sonatype.org/"
+        if (isSnapshot)
+          Some("snapshots" at nexus + "content/repositories/snapshots")
+        else
+          Some("releases"  at nexus + "service/local/staging/deploy/maven2")
+      },
+      publishArtifact in Test := false,
+      licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT")),
+      homepage := Some(url("https://github.com/koofr/java-koofr"))
     )
   )
 
