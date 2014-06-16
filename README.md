@@ -18,7 +18,7 @@ Files stored in Koofr are immutable. This means you cannot modify file after you
 
 
 ## Example
-This is the *info* example that shows how to connect to Koofr by printing out details about currently logged in user. It uses an authentication token. If you need to obtain one programatically see the *cmdline* example in the `examples/cmdline` folder.
+This is the *info* example that shows how to connect to Koofr by printing out details about currently logged in user.  
 
 
 ```java
