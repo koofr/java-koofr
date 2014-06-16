@@ -5,7 +5,7 @@ object SdkBuild extends Build {
 
   override lazy val settings = super.settings ++ Seq(
     organization := "net.koofr",
-    version := "0.1-SNAPSHOT",
+    version := "0.1",
     resolvers += "restlet" at "http://maven.restlet.org",
     autoScalaLibrary := false,
     crossPaths := false
@@ -29,8 +29,28 @@ object SdkBuild extends Build {
           Some("releases"  at nexus + "service/local/staging/deploy/maven2")
       },
       publishArtifact in Test := false,
-      licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT")),
-      homepage := Some(url("https://github.com/koofr/java-koofr"))
+      pomExtra :=
+        <url>https://github.com/koofr/java-koofr</url>
+          <licenses>
+            <license>
+              <name>MIT</name>
+              <url>http://opensource.org/licenses/MIT</url>
+              <distribution>repo</distribution>
+            </license>
+          </licenses>
+          <scm>
+            <url>https://github.com/koofr/java-koofr.git</url>
+          </scm>
+          <developers>
+            <developer>
+              <id>jaKa</id>
+              <name>Jaka Mocnik</name>
+            </developer>
+            <developer>
+              <id>edofic</id>
+              <name>Andraz Bajt</name>
+            </developer>
+          </developers>
     )
   )
 
