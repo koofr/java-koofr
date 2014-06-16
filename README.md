@@ -62,3 +62,8 @@ Hostname is passed in without protocol and without any slashes.
 To build jars use
 
     sbt package
+
+
+## Maven
+
+Prebuilt jars are available for maven at [oss.sonatype.org](https://oss.sonatype.org) under id `net.koofr.sdk-java`
