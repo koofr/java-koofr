@@ -5,7 +5,7 @@ object SdkBuild extends Build {
 
   override lazy val settings = super.settings ++ Seq(
     organization := "net.koofr",
-    version := "0.1",
+    version := "0.2-SNAPSHOT",
     resolvers += "restlet" at "http://maven.restlet.org",
     autoScalaLibrary := false,
     crossPaths := false
