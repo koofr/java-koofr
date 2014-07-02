@@ -3,6 +3,7 @@ package cmdline;
 import net.koofr.api.v2.StorageApi;
 import net.koofr.api.v2.DefaultClientFactory;
 import net.koofr.api.v2.StorageApiException;
+import net.koofr.api.v2.resources.Hit;
 import net.koofr.api.v2.resources.Mount;
 import net.koofr.api.v2.resources.File;
 import net.koofr.api.v2.transfer.ProgressListener;
@@ -14,7 +15,6 @@ import java.lang.StringBuilder;
 import java.lang.System;
 import java.util.Scanner;
 import java.util.List;
-
 
 public class Main {
     public static void main(String[] args) throws StorageApiException {
@@ -61,7 +61,7 @@ class Example implements Runnable{
     }
 
     private void printHelp() {
-        System.out.println("supported commands: 'help' 'exit' 'mounts' 'mount mount-id' 'ls' 'cd' 'mkdir name' 'rm name' 'download name' 'upload localpath'");
+        System.out.println("supported commands: 'help' 'exit' 'mounts' 'mount mount-id' 'ls' 'cd' 'mkdir name' 'rm name' 'download name' 'upload localpath' 'search terms'");
     }
 
     private void mounts() throws StorageApiException {
@@ -136,6 +136,19 @@ class Example implements Runnable{
         System.out.println("\n");
     }
 
+    private void search() throws StorageApiException {
+    	String query = sc.nextLine().trim();
+    	List<Hit> hits = api.search(query);
+    	if(hits != null) {
+	    	for(Hit h: hits) {
+	    		System.out.println(h.getMount().getName() + ":" + h.getPath());
+	    	}
+    	} else {
+    		System.out.println("No hits.");
+    	}
+        System.out.println("\n");
+    }
+    
     public void run() {
         System.out.println("First pick a mount. Use 'help' for help.");
         while(true) {
@@ -171,6 +184,9 @@ class Example implements Runnable{
                     case "upload":
                         upload();
                         break;
+                    case "search":
+                    	search();
+                    	break;
                     default:
                         printHelp();
                 }
