@@ -1394,7 +1394,29 @@ public class StorageApi {
 			throw new StorageApiException(ex);
 		}								
 	}
-	
+
+	public List<Hit> search(String query, String mountId, String path) throws StorageApiException {
+		try {
+			QueryResults r = getResource("/api/v2/search", "query", query, "mountId", mountId, "path", path).get(QueryResults.class);
+			if(null != r) {
+				List<Hit> rv = new ArrayList<Hit>();
+				for(Hit h: r.hits) {
+					if(r.mounts.containsKey(h.getMountId())) {
+						h.setMount(r.mounts.get(h.getMountId()));
+						rv.add(h);
+					}
+				}
+				return rv;
+			}
+			else {
+				return null;
+			}
+		}
+		catch(ResourceException ex) {
+			throw new StorageApiException(ex);
+		}								
+	}
+
 	public boolean checkAuthentication() throws StorageApiException {
 		try {
 			return getUserInfo() != null;
