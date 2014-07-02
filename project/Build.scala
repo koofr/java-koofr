@@ -8,7 +8,8 @@ object SdkBuild extends Build {
     version := "1.2.1",
     resolvers += "restlet" at "http://maven.restlet.org",
     autoScalaLibrary := false,
-    crossPaths := false
+    crossPaths := false,
+    javacOptions ++= Seq("-source", "1.6", "-target", "1.6")
   )
   
   lazy val sdk = Project(
