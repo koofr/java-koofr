@@ -7,7 +7,9 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,6 +19,7 @@ import net.koofr.api.v2.resources.ConnectionList;
 import net.koofr.api.v2.resources.Device;
 import net.koofr.api.v2.resources.File;
 import net.koofr.api.v2.resources.Group;
+import net.koofr.api.v2.resources.Hit;
 import net.koofr.api.v2.resources.JsonBase;
 import net.koofr.api.v2.resources.Link;
 import net.koofr.api.v2.resources.Mount;
@@ -1342,6 +1345,54 @@ public class StorageApi {
 		catch(ResourceException ex) {
 			throw new StorageApiException(ex);
 		}						
+	}
+	
+	public static class QueryResults extends JsonBase implements Serializable {
+		private static final long serialVersionUID = 1L;
+		
+		List<Hit> hits;
+		Hashtable<String, Mount> mounts;
+		
+		public QueryResults() {
+		}
+
+		public List<Hit> getHits() {
+			return hits;
+		}
+
+		public void setHits(List<Hit> hits) {
+			this.hits = hits;
+		}
+
+		public Hashtable<String, Mount> getMounts() {
+			return mounts;
+		}
+
+		public void setMounts(Hashtable<String, Mount> mounts) {
+			this.mounts = mounts;
+		}
+	}
+	
+	public List<Hit> search(String query) throws StorageApiException {
+		try {
+			QueryResults r = getResource("/api/v2/search", "query", query).get(QueryResults.class);
+			if(null != r) {
+				List<Hit> rv = new ArrayList<Hit>();
+				for(Hit h: r.hits) {
+					if(r.mounts.containsKey(h.getMountId())) {
+						h.setMount(r.mounts.get(h.getMountId()));
+						rv.add(h);
+					}
+				}
+				return rv;
+			}
+			else {
+				return null;
+			}
+		}
+		catch(ResourceException ex) {
+			throw new StorageApiException(ex);
+		}								
 	}
 	
 	public boolean checkAuthentication() throws StorageApiException {
