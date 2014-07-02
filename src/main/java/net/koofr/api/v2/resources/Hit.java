@@ -7,8 +7,8 @@ public class Hit {
     double score;
     String name;
     String type;
-    long modified;
-    long size;
+    Long modified;
+    Long size;
     String contentType;
     Mount mount;
 
@@ -63,19 +63,19 @@ public class Hit {
 		this.type = type;
 	}
 
-	public long getModified() {
+	public Long getModified() {
 		return modified;
 	}
 
-	public void setModified(long modified) {
+	public void setModified(Long modified) {
 		this.modified = modified;
 	}
 
-	public long getSize() {
+	public Long getSize() {
 		return size;
 	}
 
-	public void setSize(long size) {
+	public void setSize(Long size) {
 		this.size = size;
 	}
 
