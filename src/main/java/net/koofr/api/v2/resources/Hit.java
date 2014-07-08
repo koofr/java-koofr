@@ -1,5 +1,8 @@
 package net.koofr.api.v2.resources;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Hit {
 
     String mountId;
@@ -11,6 +14,8 @@ public class Hit {
     Long size;
     String contentType;
     Mount mount;
+	Link receiver, link;
+	Bookmark bookmark;
 
     public Mount getMount() {
 		return mount;
@@ -87,4 +92,28 @@ public class Hit {
 		this.contentType = contentType;
 	}
 
+	public Link getReceiver() {
+		return receiver;
+	}
+
+	public void setReceiver(Link receiver) {
+		this.receiver = receiver;
+	}
+
+	public Link getLink() {
+		return link;
+	}
+
+	public void setLink(Link link) {
+		this.link = link;
+	}
+
+	public Bookmark getBookmark() {
+		return bookmark;
+	}
+
+	public void setBookmark(Bookmark bookmark) {
+		this.bookmark = bookmark;
+	}
+	
 }
