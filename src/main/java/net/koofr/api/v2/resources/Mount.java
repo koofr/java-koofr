@@ -26,6 +26,7 @@ public class Mount extends JsonBase implements Serializable {
 	private String type;
 	private Boolean online;
 	private Boolean isShared;
+	private Boolean isPrimary;
 	private List<User> users;
 	private List<Group> groups;
 	private Permissions permissions;
@@ -131,6 +132,14 @@ public class Mount extends JsonBase implements Serializable {
 	
 	public void setIsShared(Boolean isShared) {
 		this.isShared = isShared;
+	}
+	
+	public Boolean getIsPrimary() {
+		return isPrimary;
+	}
+	
+	public void setIsPrimary(Boolean isPrimary) {
+		this.isPrimary = isPrimary;
 	}
 	
 	public Root getRoot() {
