@@ -3,6 +3,7 @@ package net.koofr.api.v2;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
@@ -74,7 +75,7 @@ import org.restlet.util.Series;
 public class StorageApi {
 	public static final String TAG = StorageApi.class.getName();
 
-	public static final int DOWNLOAD_BUFFER_SIZE = 4096;
+	public static final int DOWNLOAD_BUFFER_SIZE = 64*1024;
 
 	public static final String HEADER_KOOFR_USERNAME = "X-Koofr-Email";
 	public static final String HEADER_KOOFR_PASSWORD = "X-Koofr-Password";
@@ -1479,40 +1480,80 @@ public class StorageApi {
 	public String filesDownload(String mountId, String path,
 			String downloadLocation, ProgressListener listener,
 			String thumbSize, String destName) throws StorageApiException {
-		try {
-			BufferedInputStream inStream;
-			BufferedOutputStream outStream;
-			FileOutputStream fileStream;
+		String[] parts = path.split("/");
+		String filePath;
+		BufferedOutputStream outStream = null;
+		FileOutputStream fileStream = null;
+		InputStream inStream = null;
+		
+		if (destName == null) {
+			destName = parts[parts.length - 1];
+			String ext = "";
+			if (path.endsWith("/")) {
+				ext = ".zip";
+			} else {
+				int pos = destName.lastIndexOf('.');
+				if(pos >= 0) {
+					ext = destName.substring(pos).toLowerCase();
+					destName = destName.substring(0, pos);
+				}
+				else {
+					ext = "";
+				}
+			}
+			filePath = downloadLocation + java.io.File.separator + destName + ext;
+			java.io.File outFile = new java.io.File(filePath);
+			for (int i = 1; outFile.exists(); i++) {
+				filePath = downloadLocation + java.io.File.separator + destName + "(" + i + ")"
+						+ ext;
+				outFile = new java.io.File(filePath);
+			}
+		}
+		else {
+			filePath = downloadLocation + java.io.File.separator + destName;
+		}
 
-			String[] parts = path.split("/");
-			String filePath;
-			
-			if (destName == null) {
-				destName = parts[parts.length - 1];
-				String ext = "";
-				if (path.endsWith("/")) {
-					ext = ".zip";
-				} else {
-					int pos = destName.lastIndexOf('.');
-					if(pos >= 0) {
-						ext = destName.substring(pos).toLowerCase();
-						destName = destName.substring(0, pos);
-					}
-					else {
-						ext = "";
-					}
-				}
-				filePath = downloadLocation + java.io.File.separator + destName + ext;
-				java.io.File outFile = new java.io.File(filePath);
-				for (int i = 1; outFile.exists(); i++) {
-					filePath = downloadLocation + java.io.File.separator + destName + "(" + i + ")"
-							+ ext;
-					outFile = new java.io.File(filePath);
-				}
+		try {
+			inStream = filesDownload(mountId, path, listener, thumbSize);		
+			fileStream = new FileOutputStream(filePath);
+			outStream = new BufferedOutputStream(fileStream,
+					DOWNLOAD_BUFFER_SIZE);
+	
+			byte[] data = new byte[DOWNLOAD_BUFFER_SIZE];
+			int bytesRead = 0;
+			long totalRead = 0;
+	
+			while (!listener.isCanceled()
+					&& (bytesRead = inStream.read(data, 0, data.length)) >= 0) {
+				outStream.write(data, 0, bytesRead);
+				totalRead += bytesRead;
+				listener.transferred(totalRead);
 			}
-			else {
-				filePath = downloadLocation + java.io.File.separator + destName;
+	
+			if (listener.isCanceled()) {
+				new java.io.File(filePath).delete();
+				return null;
+			} else {
+				return filePath;
 			}
+		}
+		catch(IOException ex) {
+			throw new StorageApiException(ex);
+		}
+		finally {
+			if(outStream != null)
+				try { outStream.close(); } catch(Exception e) {}
+			if(fileStream != null)
+				try { fileStream.close(); } catch(Exception e) {}		
+			if(inStream != null)
+				try { inStream.close(); } catch(Exception e) {} 
+		}		
+	}
+
+	public InputStream filesDownload(String mountId, String path,
+			ProgressListener listener, String thumbSize) throws StorageApiException {
+		try {
+			BufferedInputStream inStream;			
 
 			String downloadUrl = baseUrl + "/content/api/v2/mounts/" + mountId + "/files/get?path=";			
 			try {
@@ -1526,7 +1567,7 @@ public class StorageApi {
 				downloadUrl += "&thumb=" + thumbSize;					
 			}
 
-			HttpGet request = new HttpGet(downloadUrl);
+			final HttpGet request = new HttpGet(downloadUrl);
 			if(token != null) {
 				request.addHeader("Authorization", "Token token=\"" + token + "\"");
 			}
@@ -1544,33 +1585,15 @@ public class StorageApi {
 				HttpEntity entity = resp.getEntity();
 				listener.setTotal(entity.getContentLength());
 
-				inStream = new BufferedInputStream(entity.getContent());
+				inStream = new BufferedInputStream(entity.getContent(), DOWNLOAD_BUFFER_SIZE) {
+					@Override
+					public void close() throws IOException {
+						request.abort();
+						super.close();
+					}
+				};
 
-				fileStream = new FileOutputStream(filePath);
-				outStream = new BufferedOutputStream(fileStream,
-						DOWNLOAD_BUFFER_SIZE);
-
-				byte[] data = new byte[DOWNLOAD_BUFFER_SIZE];
-				int bytesRead = 0;
-				long totalRead = 0;
-
-				while (!listener.isCanceled()
-						&& (bytesRead = inStream.read(data, 0, data.length)) >= 0) {
-					outStream.write(data, 0, bytesRead);
-					totalRead += bytesRead;
-					listener.transferred(totalRead);
-				}
-
-				outStream.close();
-				fileStream.close();
-				request.abort();
-
-				if (listener.isCanceled()) {
-					new java.io.File(filePath).delete();
-					return null;
-				} else {
-					return filePath;
-				}
+				return inStream;
 			} catch (Exception e) {
 				throw new StorageApiException(e);
 			}
