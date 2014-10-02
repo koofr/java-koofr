@@ -25,7 +25,7 @@ public class DefaultClientFactory {
 
         Context restletContext = new Context();
         restletContext.getParameters().set("maxTotalConnections", "16");
-        restletContext.getParameters().set("maxConnectionsPerHost", "8");
+        restletContext.getParameters().set("maxConnectionsPerHost", "8");        
         Client client = new Client(restletContext, java.util.Arrays.asList(Protocol.HTTPS), HttpsClientHelper.class.getName());
 
         return new StorageApi("https://" + hostname, client);

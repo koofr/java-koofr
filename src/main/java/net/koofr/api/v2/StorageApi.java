@@ -1601,4 +1601,16 @@ public class StorageApi {
 			throw new StorageApiException(e);
 		}
 	}
+	
+	public String getMyIp() throws StorageApiException {
+		try {
+			Reference ref = new Reference(baseUrl + "/ip");
+			ClientResource res = new CustomClientResource(ref);		
+			res.setNext(client);
+			return res.get().getText();
+		} catch(IOException e) {
+			throw new StorageApiException(e);
+		}
+	}
+
 }
