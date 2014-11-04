@@ -8,14 +8,14 @@ object SdkBuild extends Build {
     version := "1.2.3",
     resolvers += "restlet" at "http://maven.restlet.org",
     autoScalaLibrary := false,
-    crossPaths := false,
-    javacOptions ++= Seq("-source", "1.6", "-target", "1.6")
+    crossPaths := false
   )
-  
+
   lazy val sdk = Project(
     id = "sdk-java",
     base = file("."),
     settings = Project.defaultSettings ++ Seq(
+      javacOptions ++= Seq("-source", "1.6", "-target", "1.6"),
       libraryDependencies ++= Seq(
         "org.apache.httpcomponents" % "httpclient" % "4.2.1",
         "org.restlet.jse" % "org.restlet.ext.jackson" % "2.1.2",
@@ -57,11 +57,13 @@ object SdkBuild extends Build {
 
   lazy val exampleCmdline = Project(
     id = "cmdline",
-    base = file("examples/cmdline")
+    base = file("examples/cmdline"),
+    settings = Project.defaultSettings ++ Seq(mainClass in (Compile,run) := Some("cmdline.Main"))
   ) dependsOn sdk
 
   lazy val exampleInfo = Project(
     id = "info",
-    base = file("examples/info")
+    base = file("examples/info"),
+    settings = Project.defaultSettings ++ Seq(mainClass in (Compile,run) := Some("info.Main"))
   ) dependsOn sdk
 }

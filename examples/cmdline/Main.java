@@ -13,6 +13,7 @@ import net.koofr.api.v2.transfer.upload.UploadData;
 import java.lang.Override;
 import java.lang.StringBuilder;
 import java.lang.System;
+import java.util.HashMap;
 import java.util.Scanner;
 import java.util.List;
 
@@ -61,7 +62,7 @@ class Example implements Runnable{
     }
 
     private void printHelp() {
-        System.out.println("supported commands: 'help' 'exit' 'mounts' 'mount mount-id' 'ls' 'cd' 'mkdir name' 'rm name' 'download name' 'upload localpath' 'search terms'");
+        System.out.println("supported commands: 'help' 'exit' 'mounts' 'mount mount-id' 'ls' 'cd' 'mkdir name' 'rm name' 'download name' 'upload localpath' 'search terms' 'attributes'");
     }
 
     private void mounts() throws StorageApiException {
@@ -146,7 +147,14 @@ class Example implements Runnable{
     	} else {
     		System.out.println("No hits.");
     	}
-        System.out.println("\n");
+        System.out.println("\n");    
+    }
+    
+    private void attributes() throws StorageApiException {
+    	HashMap attributes = api.getAttributes();
+    	for(Object key: attributes.keySet()) {
+    		System.out.println(key + ": " + attributes.get(key));
+    	}
     }
     
     public void run() {
@@ -186,6 +194,9 @@ class Example implements Runnable{
                         break;
                     case "search":
                     	search();
+                    	break;
+                    case "attributes":
+                    	attributes();
                     	break;
                     default:
                         printHelp();

@@ -10,6 +10,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.UUID;
@@ -1612,5 +1613,10 @@ public class StorageApi {
 			throw new StorageApiException(e);
 		}
 	}
-
+	
+	@SuppressWarnings("rawtypes")
+	public HashMap getAttributes() throws StorageApiException {
+		return getResource("/api/v2/user/attributes").get(HashMap.class);
+	}
+	
 }
