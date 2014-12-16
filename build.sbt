@@ -10,7 +10,9 @@ crossPaths := false
 
 lazy val sdk = project in file(".")
 
-javacOptions ++= Seq("-source", "1.6", "-target", "1.6")
+javacOptions ++= Seq("-source", "1.6")
+
+javacOptions in compile ++= Seq("-target", "1.6")
 
 libraryDependencies ++= Seq(
   "org.apache.httpcomponents" % "httpclient" % "4.2.1",
