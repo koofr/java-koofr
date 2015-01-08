@@ -1,6 +1,6 @@
 organization := "net.koofr"
 
-version := "1.2.4"
+version := "1.2.5"
 
 resolvers += "restlet" at "http://maven.restlet.org"
 

@@ -1430,12 +1430,14 @@ public class StorageApi {
 	public boolean filesUpload(String mountId, String path, UploadData uploadData,
 			ProgressListener listener) throws StorageApiException {
 		try {
-			String uploadUrl = baseUrl + "/content/api/v2/mounts/" + mountId + "/files/put?path=";			
+			String uploadUrl = baseUrl + "/content/api/v2/mounts/" + mountId + "/files/put";			
 			try {
-				uploadUrl = uploadUrl + URLEncoder.encode(path, "UTF-8");
+				uploadUrl = uploadUrl +
+					"?path=" + URLEncoder.encode(path, "UTF-8") +
+					"&filename=" + URLEncoder.encode(uploadData.getName(), "UTF-8");					
 			}
 			catch(UnsupportedEncodingException ex) {
-				uploadUrl = uploadUrl + path;
+				throw new StorageApiException(ex);
 			}
 
 			HttpPost upload = new HttpPost(uploadUrl);
