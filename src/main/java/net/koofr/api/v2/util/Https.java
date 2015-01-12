@@ -9,7 +9,7 @@ public class Https {
 	public synchronized static SSLSocketFactory getFactory() {
 		if (factory == null) {
 			try {
-				factory = new IgnorantSSLSocketFactory();
+				factory = new SecureSSLSocketFactory();
 			} catch (Exception e) { // Gotta Catch 'Em All
 				e.printStackTrace();
 			}
