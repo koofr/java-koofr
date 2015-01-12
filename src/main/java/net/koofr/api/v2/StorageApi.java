@@ -117,7 +117,9 @@ public class StorageApi {
 	
 	protected void fireExceptionHandler(Exception ex) throws StorageApiException {
 		if(xhandler != null) {
-			xhandler.handle(ex);
+			if(xhandler.handle(ex)) {
+				throw new StorageApiException();
+			}
 		}
 	}
 
