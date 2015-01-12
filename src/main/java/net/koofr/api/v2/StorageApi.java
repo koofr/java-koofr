@@ -86,7 +86,8 @@ public class StorageApi {
 	private String baseUrl;
 	private Client client;
 	private Log log;
-
+	private StorageApiExceptionHandler xhandler;
+	
 	public void setLog(Log log) {
 		this.log = log;
 	}
@@ -107,6 +108,17 @@ public class StorageApi {
 		this.baseUrl = baseUrl;
 		this.client = client;
 		this.log = null;
+		this.xhandler = null;
+	}
+
+	public void setExceptionHandler(StorageApiExceptionHandler h) {
+		xhandler = h;
+	}
+	
+	protected void fireExceptionHandler(Exception ex) throws StorageApiException {
+		if(xhandler != null) {
+			xhandler.handle(ex);
+		}
 	}
 
 	public void setAuthToken(String token) {
@@ -140,6 +152,7 @@ public class StorageApi {
 			return rv;
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}
 	}
@@ -198,6 +211,7 @@ public class StorageApi {
 			return getResource("/api/v2/user").get(UserInfo.class);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}
 	}
@@ -207,6 +221,7 @@ public class StorageApi {
 			return getResource("/api/v2/user/connections").get(ConnectionList.class);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}
 	}
@@ -240,6 +255,7 @@ public class StorageApi {
 			getResource("/api/v2/user").put(uu);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}
 	}
@@ -275,6 +291,7 @@ public class StorageApi {
 			getResource("/api/v2/user/password").put(upu);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}
 	}
@@ -286,6 +303,7 @@ public class StorageApi {
 					get(NotificationSettings.class);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}				
 	}
@@ -296,6 +314,7 @@ public class StorageApi {
 			getResource("/api/v2/user/settings/notifications").put(s);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}				
 	}
@@ -309,6 +328,7 @@ public class StorageApi {
 					get(SecuritySettings.class);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}						
 	}
@@ -319,6 +339,7 @@ public class StorageApi {
 			getResource("/api/v2/user/settings/security").put(s);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}				
 	}
@@ -348,6 +369,7 @@ public class StorageApi {
 			}
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}
 	}
@@ -361,6 +383,7 @@ public class StorageApi {
 			getResource("/api/v2/user/bookmarks").put(rv);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}
 	}
@@ -390,6 +413,7 @@ public class StorageApi {
 					.get(MediaType.IMAGE_ALL).getStream();
 		}
 		catch(Exception ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}
 	}	
@@ -415,6 +439,7 @@ public class StorageApi {
 			return getResource("/api/v2/groups").post(r, Group.class);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}				
 	}
@@ -444,6 +469,7 @@ public class StorageApi {
 			}
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}		
 	}
@@ -453,6 +479,7 @@ public class StorageApi {
 			return getResource("/api/v2/groups/" + id).get(Group.class);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}
 	}
@@ -464,6 +491,7 @@ public class StorageApi {
 			getResource("/api/v2/groups/" + id).put(r);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}
 	}
@@ -499,6 +527,7 @@ public class StorageApi {
 					post(r, User.class);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}
 	}
@@ -525,6 +554,7 @@ public class StorageApi {
 			getResource("/api/v2/groups/" + groupId + "/users/" + userId).put(r);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}
 	}
@@ -535,6 +565,7 @@ public class StorageApi {
 			getResource("/api/v2/groups/" + groupId + "/users/" + userId).delete();
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}		
 	}
@@ -544,6 +575,7 @@ public class StorageApi {
 			getResource("/api/v2/groups/" + groupId).delete();
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}				
 	}
@@ -572,6 +604,7 @@ public class StorageApi {
 			}
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}		
 	}
@@ -606,6 +639,7 @@ public class StorageApi {
 			return getResource("/api/v2/devices").post(r, Device.class);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}
 	}
@@ -615,6 +649,7 @@ public class StorageApi {
 			return getResource("/api/v2/devices/" + deviceId).get(Device.class);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}
 	}
@@ -627,6 +662,7 @@ public class StorageApi {
 			getResource("/api/v2/devices/" + deviceId).put(r);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}		
 	}
@@ -636,6 +672,7 @@ public class StorageApi {
 			getResource("/api/v2/devices/" + deviceId).delete();
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}
 	}
@@ -667,6 +704,7 @@ public class StorageApi {
 			}
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}
 	}
@@ -676,6 +714,7 @@ public class StorageApi {
 			return getResource("/api/v2/mounts/" + id).get(Mount.class);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}		
 	}
@@ -710,6 +749,7 @@ public class StorageApi {
 					post(r, Mount.class);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}		
 	}
@@ -722,6 +762,7 @@ public class StorageApi {
 			getResource("/api/v2/mounts/" + id).put(r);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}		
 	}
@@ -736,6 +777,7 @@ public class StorageApi {
 					post(r, User.class);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}
 	}
@@ -749,6 +791,7 @@ public class StorageApi {
 					put(r);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}
 	}
@@ -760,6 +803,7 @@ public class StorageApi {
 					delete();
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}		
 	}
@@ -773,6 +817,7 @@ public class StorageApi {
 					put(r);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}		
 	}
@@ -784,6 +829,7 @@ public class StorageApi {
 					delete();
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}				
 	}
@@ -793,6 +839,7 @@ public class StorageApi {
 			getResource("/api/v2/mounts/" + mountId).delete();
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}		
 	}
@@ -807,6 +854,7 @@ public class StorageApi {
 					"path", path).post(r);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}
 	}
@@ -837,6 +885,7 @@ public class StorageApi {
 			}
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}		
 	}
@@ -854,6 +903,7 @@ public class StorageApi {
 			}
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}				
 	}
@@ -884,6 +934,7 @@ public class StorageApi {
 			}
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}
 	}
@@ -895,6 +946,7 @@ public class StorageApi {
 					"/bundle", "path", path).get(PathInfo.class);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}
 	}
@@ -905,6 +957,7 @@ public class StorageApi {
 					"path", path).get(File.class);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}				
 	}
@@ -918,6 +971,7 @@ public class StorageApi {
 					"path", path).put(r);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}		
 	}
@@ -929,6 +983,7 @@ public class StorageApi {
 					"path", path).delete();
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}				
 	}
@@ -969,6 +1024,7 @@ public class StorageApi {
 			}
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}		
 	}
@@ -989,6 +1045,7 @@ public class StorageApi {
 			}
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}		
 	}
@@ -1015,6 +1072,7 @@ public class StorageApi {
 					post(r, Comment.class);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}
 	}
@@ -1053,6 +1111,7 @@ public class StorageApi {
 			return cl.getComments();
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}
 	}
@@ -1064,6 +1123,7 @@ public class StorageApi {
 					commentId).get(Comment.class);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}
 	}
@@ -1075,6 +1135,7 @@ public class StorageApi {
 					commentId).delete();
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}		
 	}
@@ -1114,6 +1175,7 @@ public class StorageApi {
 					post(r, Link.class);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}				
 	}
@@ -1131,6 +1193,7 @@ public class StorageApi {
 			}
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}				
 	}
@@ -1142,6 +1205,7 @@ public class StorageApi {
 					linkId).get(Link.class);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}				
 	}
@@ -1153,6 +1217,7 @@ public class StorageApi {
 					"path", path).get(Link.class);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}						
 	}
@@ -1170,6 +1235,7 @@ public class StorageApi {
 			}
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}						
 	}
@@ -1197,6 +1263,7 @@ public class StorageApi {
 					linkId + "/urlHash").put(r);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}						
 	}
@@ -1208,6 +1275,7 @@ public class StorageApi {
 					linkId + "/password/reset").put(null, Link.class);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}						
 	}
@@ -1219,6 +1287,7 @@ public class StorageApi {
 					linkId + "/password").delete();
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}						
 	}
@@ -1230,6 +1299,7 @@ public class StorageApi {
 					delete();
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}						
 	}
@@ -1243,6 +1313,7 @@ public class StorageApi {
 					post(r, Link.class);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}				
 	}
@@ -1260,6 +1331,7 @@ public class StorageApi {
 			}
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}				
 	}
@@ -1271,6 +1343,7 @@ public class StorageApi {
 					linkId).get(Link.class);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}				
 	}
@@ -1282,6 +1355,7 @@ public class StorageApi {
 					"path", path).get(Link.class);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}						
 	}
@@ -1299,6 +1373,7 @@ public class StorageApi {
 			}
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}						
 	}
@@ -1313,6 +1388,7 @@ public class StorageApi {
 					linkId + "/urlHash").put(r);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}						
 	}
@@ -1324,6 +1400,7 @@ public class StorageApi {
 					linkId + "/password/reset").put(null, Link.class);
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}						
 	}
@@ -1335,6 +1412,7 @@ public class StorageApi {
 					linkId + "/password").delete();
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}						
 	}
@@ -1345,6 +1423,7 @@ public class StorageApi {
 					delete();
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}						
 	}
@@ -1393,6 +1472,7 @@ public class StorageApi {
 			}
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}								
 	}
@@ -1415,6 +1495,7 @@ public class StorageApi {
 			}
 		}
 		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}								
 	}
@@ -1461,9 +1542,11 @@ public class StorageApi {
 				HttpResponse resp = client.execute(upload);
 				return resp.getStatusLine().getStatusCode() == 200;
 			} catch (Exception e) {
+				fireExceptionHandler(e);
 				throw new StorageApiException(e);
 			}
 		} catch (ResourceException e) {
+			fireExceptionHandler(e);
 			throw new StorageApiException(e);
 		}
 	}
@@ -1541,6 +1624,7 @@ public class StorageApi {
 			}
 		}
 		catch(IOException ex) {
+			fireExceptionHandler(ex);
 			throw new StorageApiException(ex);
 		}
 		finally {
@@ -1598,9 +1682,11 @@ public class StorageApi {
 
 				return inStream;
 			} catch (Exception e) {
+				fireExceptionHandler(e);
 				throw new StorageApiException(e);
 			}
 		} catch (ResourceException e) {
+			fireExceptionHandler(e);
 			throw new StorageApiException(e);
 		}
 	}
@@ -1612,13 +1698,20 @@ public class StorageApi {
 			res.setNext(client);
 			return res.get().getText();
 		} catch(IOException e) {
+			fireExceptionHandler(e);
 			throw new StorageApiException(e);
 		}
 	}
 	
 	@SuppressWarnings("rawtypes")
 	public HashMap getAttributes() throws StorageApiException {
-		return getResource("/api/v2/user/attributes").get(HashMap.class);
+		try {
+			return getResource("/api/v2/user/attributes").get(HashMap.class);
+		}
+		catch(Exception ex) {
+			fireExceptionHandler(ex);
+			throw new StorageApiException(ex);
+		}
 	}
 	
 }
