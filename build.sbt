@@ -1,5 +1,7 @@
 organization := "net.koofr"
 
+name := "java-koofr"
+
 version := "1.2.6"
 
 resolvers += "restlet" at "http://maven.restlet.org"
@@ -14,21 +16,9 @@ javacOptions ++= Seq("-source", "1.6")
 
 javacOptions in compile ++= Seq("-target", "1.6")
 
-libraryDependencies ++= Seq(
-  "org.apache.httpcomponents" % "httpclient" % "4.2.1",
-  "org.restlet.jse" % "org.restlet.ext.jackson" % "2.1.2",
-  "org.restlet.jse" % "org.restlet.ext.httpclient" % "2.1.2"
-)
- 
-publishMavenStyle := true
+seq(bintraySettings:_*)
 
-publishTo <<= isSnapshot { isSnapshot =>
-    val nexus = "https://oss.sonatype.org/"
-    if (isSnapshot)
-    Some("snapshots" at nexus + "content/repositories/snapshots")
-    else
-    Some("releases"  at nexus + "service/local/staging/deploy/maven2")
-}
+licenses ++= Seq("MIT" -> url("http://opensource.org/licenses/MIT"))
 
 publishArtifact in Test := false
 
@@ -46,7 +36,7 @@ pomExtra :=
     </scm>
     <developers>
       <developer>
-        <id>jaKa</id>
+        <id>jkmcnk</id>
         <name>Jaka Mocnik</name>
       </developer>
       <developer>
@@ -54,7 +44,13 @@ pomExtra :=
         <name>Andraz Bajt</name>
       </developer>
     </developers>
-  
+
+
+libraryDependencies ++= Seq(
+  "org.apache.httpcomponents" % "httpclient" % "4.2.1",
+  "org.restlet.jse" % "org.restlet.ext.jackson" % "2.1.2",
+  "org.restlet.jse" % "org.restlet.ext.httpclient" % "2.1.2"
+)  
 
 lazy val exampleCmdline = Project(
   id = "cmdline",
