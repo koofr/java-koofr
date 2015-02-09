@@ -49,8 +49,8 @@ pomExtra :=
 libraryDependencies ++= Seq(
   "org.apache.httpcomponents" % "httpclient" % "4.2.1",
   "org.restlet.jse" % "org.restlet.ext.jackson" % "2.1.2",
-  "org.restlet.jse" % "org.restlet.ext.httpclient" % "2.1.2"
-)  
+  "org.restlet.jse" % "org.restlet.ext.httpclient" % "2.1.2" exclude("org.restlet.jse", "org.restlet.ext.ssl")
+)
 
 lazy val exampleCmdline = Project(
   id = "cmdline",
