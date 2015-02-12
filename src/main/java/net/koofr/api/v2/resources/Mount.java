@@ -24,6 +24,7 @@ public class Mount extends JsonBase implements Serializable {
 	private String id;
 	private String name;
 	private String type;
+	private String origin;
 	private Boolean online;
 	private Boolean isShared;
 	private Boolean isPrimary;
@@ -34,6 +35,7 @@ public class Mount extends JsonBase implements Serializable {
 	private User owner;
 	private Long spaceTotal, spaceUsed;
 	private Root root;
+	private Boolean canWrite, canUpload;
 
 	public Long getSpaceTotal() {
 		return spaceTotal;
@@ -148,6 +150,30 @@ public class Mount extends JsonBase implements Serializable {
 	
 	public void setRoot(Root root) {
 		this.root = root;
+	}
+
+	public String getOrigin() {
+		return origin;
+	}
+
+	public void setOrigin(String origin) {
+		this.origin = origin;
+	}
+
+	public Boolean getCanWrite() {
+		return canWrite;
+	}
+
+	public void setCanWrite(Boolean canWrite) {
+		this.canWrite = canWrite;
+	}
+	
+	public Boolean getCanUpload() {
+		return canUpload;
+	}
+
+	public void setCanUpload(Boolean canUpload) {
+		this.canUpload = canUpload;
 	}
 	
 }
