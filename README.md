@@ -66,4 +66,4 @@ To build jars use
 
 ## Maven
 
-Prebuilt jars are available for maven at [oss.sonatype.org](https://oss.sonatype.org) under id `net.koofr.sdk-java`
+Prebuilt jars are available for maven at [JCenter](https://bintray.com/bintray/jcenter), group ID `net.koofr`, artefact ID `java-koofr`
