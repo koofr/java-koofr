@@ -2,7 +2,7 @@ organization := "net.koofr"
 
 name := "java-koofr"
 
-version := "1.2.7"
+version := "1.2.8"
 
 resolvers += "restlet" at "http://maven.restlet.org"
 
@@ -18,19 +18,14 @@ javacOptions in compile ++= Seq("-target", "1.6")
 
 seq(bintraySettings:_*)
 
+bintray.Keys.bintrayOrganization in bintray.Keys.bintray := Some("koofr")
+
 licenses ++= Seq("MIT" -> url("http://opensource.org/licenses/MIT"))
 
 publishArtifact in Test := false
 
 pomExtra :=
   <url>https://github.com/koofr/java-koofr</url>
-    <licenses>
-      <license>
-        <name>MIT</name>
-        <url>http://opensource.org/licenses/MIT</url>
-        <distribution>repo</distribution>
-      </license>
-    </licenses>
     <scm>
       <url>https://github.com/koofr/java-koofr.git</url>
     </scm>
