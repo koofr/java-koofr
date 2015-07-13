@@ -390,10 +390,14 @@ public class StorageApi {
 		}
 	}
 	
-	public void deleteBookmark(Bookmark bookmark) throws StorageApiException {
-		List<Bookmark> bmarks = getBookmarks();
-		bmarks.remove(bookmark);
-		putBookmarks(bmarks);
+	public void deleteBookmark(String mountId, String path) throws StorageApiException {
+		try {
+			getResource("/api/v2/user/bookmarks", "mountId", mountId, "path", path).delete();
+		}
+		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
+			throw new StorageApiException(ex);
+		}
 	}
 	
 	public void addBookmark(String mountId, String path, String name) throws StorageApiException {
@@ -401,10 +405,12 @@ public class StorageApi {
 		b.setMountId(mountId);
 		b.setPath(path);
 		b.setName(name);
-		List<Bookmark> bmarks = getBookmarks();
-		if(!bmarks.contains(b)) {
-			bmarks.add(b);
-			putBookmarks(bmarks);
+		try {
+			getResource("/api/v2/user/bookmarks").post(b);
+		}
+		catch(ResourceException ex) {
+			fireExceptionHandler(ex);
+			throw new StorageApiException(ex);
 		}
 	}
 
