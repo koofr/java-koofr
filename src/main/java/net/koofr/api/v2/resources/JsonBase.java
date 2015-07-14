@@ -1,6 +1,6 @@
 package net.koofr.api.v2.resources;
 
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JsonBase {
 	private static ObjectMapper mapper = new ObjectMapper();

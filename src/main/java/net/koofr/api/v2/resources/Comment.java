@@ -2,7 +2,7 @@ package net.koofr.api.v2.resources;
 
 import java.io.Serializable;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Comment extends JsonBase implements Serializable {
