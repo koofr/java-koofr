@@ -186,8 +186,11 @@ public class StorageApi {
     return true;
   }
   
+  public void clearOAuthTokens() {
+    oauthToken = null;
+  }
+  
   public OAuthToken setOAuthCode(String code, String redirectUri) throws StorageApiException {
-    System.out.println("Set via code " + code + " " + clientId + " " + clientSecret);
     Reference ref = new Reference(new Reference(baseUrl), "/oauth2/token");
     AccessTokenClientResource res = new AccessTokenClientResource(ref);
     res.setClientCredentials(clientId, clientSecret);
@@ -229,7 +232,9 @@ public class StorageApi {
     renewIfNeccessary();
     Reference ref = new Reference(new Reference(baseUrl), path);
     CustomClientResource res = new CustomClientResource(ref);
-    res.setToken(oauthToken.token);
+    if(oauthToken != null) {
+      res.setToken(oauthToken.token);
+    }
     res.setNext(client);
     return res;
   }
@@ -242,7 +247,9 @@ public class StorageApi {
       ref = ref.addQueryParameter(query[i], query[i + 1]);
     }
     CustomClientResource res = new CustomClientResource(ref);
-    res.setToken(oauthToken.token);
+    if(oauthToken != null) {
+      res.setToken(oauthToken.token);
+    }
     res.setNext(client);
     return res;
   }
@@ -251,7 +258,9 @@ public class StorageApi {
     debug(TAG, "Resource path: " + ref.getPath());
     renewIfNeccessary();
     CustomClientResource res = new CustomClientResource(ref);
-    res.setToken(oauthToken.token);
+    if(oauthToken != null) {
+      res.setToken(oauthToken.token);
+    }
     res.setNext(client);
     return res;
   }
