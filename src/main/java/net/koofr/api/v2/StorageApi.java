@@ -153,6 +153,22 @@ public class StorageApi {
     }
   }
   
+  public String getOAuthAccessToken() {
+    if(null != oauthToken) {
+      return oauthToken.access;
+    } else {
+      return null;
+    }
+  }
+
+  public String getOAuthRefreshToken() {
+    if(null != oauthToken) {
+      return oauthToken.refresh;
+    } else {
+      return null;
+    }
+  }
+  
   private long EXPIRATION_THRESHOLD = 5*60*1000L;
   
   private boolean renewIfNeccessary() throws StorageApiException {
