@@ -5,7 +5,7 @@ import java.io.Serializable;
 import org.apache.http.entity.mime.content.AbstractContentBody;
 
 public interface UploadData extends Serializable {
-	public AbstractContentBody getBody();
+  public AbstractContentBody getBody();
 
-	public String getName();
+  public String getName();
 }

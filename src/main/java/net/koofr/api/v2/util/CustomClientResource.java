@@ -11,23 +11,23 @@ import org.restlet.ext.oauth.ProtectedClientResource;
 
 public class CustomClientResource extends ProtectedClientResource {
 
-	public CustomClientResource(Reference reference) {
-		super(reference);
-	}
+  public CustomClientResource(Reference reference) {
+    super(reference);
+  }
 
-	@SuppressWarnings("unchecked")
-	public Representation handleInbound(Response response) {
-		Representation rep = super.handleInbound(response);
+  @SuppressWarnings("unchecked")
+  public Representation handleInbound(Response response) {
+    Representation rep = super.handleInbound(response);
 
-		Series<Header> headers = (Series<Header>) response.getAttributes().
-				get(HeaderConstants.ATTRIBUTE_HEADERS);
+    Series<Header> headers = (Series<Header>) response.getAttributes().
+        get(HeaderConstants.ATTRIBUTE_HEADERS);
 
-		try {
-			String location = headers.getFirstValue("Location");
-			rep.setLocationRef(location);
-		} catch (Exception e) {
-		}
+    try {
+      String location = headers.getFirstValue("Location");
+      rep.setLocationRef(location);
+    } catch (Exception e) {
+    }
 
-		return rep;
-	}
+    return rep;
+  }
 }

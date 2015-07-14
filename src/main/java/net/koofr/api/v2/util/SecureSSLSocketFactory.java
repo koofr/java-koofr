@@ -20,61 +20,61 @@ import org.apache.http.conn.ssl.SSLSocketFactory;
 
 @SuppressWarnings("deprecated")
 public class SecureSSLSocketFactory extends SSLSocketFactory {
-	SSLContext sslContext = SSLContext.getInstance("TLS");
+  SSLContext sslContext = SSLContext.getInstance("TLS");
 
-	public SecureSSLSocketFactory() throws NoSuchAlgorithmException,
-		KeyManagementException, KeyStoreException,
-		UnrecoverableKeyException {
-		super((KeyStore)null);
+  public SecureSSLSocketFactory() throws NoSuchAlgorithmException,
+    KeyManagementException, KeyStoreException,
+    UnrecoverableKeyException {
+    super((KeyStore)null);
 
-		TrustManagerFactory f = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-		f.init((KeyStore)null);
-		X509TrustManager utm = null;
-		for (TrustManager tm: f.getTrustManagers()) {
-			if (tm instanceof X509TrustManager) {
-				utm = (X509TrustManager) tm;
-				break;
-			}
-		}
-		if(null == utm) {
-			throw new KeyManagementException("Failed to get default trust manager.");
-		}
-		final X509TrustManager upstream = utm;
-		TrustManager tm = new X509TrustManager() {
-			public void checkClientTrusted(X509Certificate[] chain,
-					String authType) throws CertificateException {
-			}
+    TrustManagerFactory f = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+    f.init((KeyStore)null);
+    X509TrustManager utm = null;
+    for (TrustManager tm: f.getTrustManagers()) {
+      if (tm instanceof X509TrustManager) {
+        utm = (X509TrustManager) tm;
+        break;
+      }
+    }
+    if(null == utm) {
+      throw new KeyManagementException("Failed to get default trust manager.");
+    }
+    final X509TrustManager upstream = utm;
+    TrustManager tm = new X509TrustManager() {
+      public void checkClientTrusted(X509Certificate[] chain,
+          String authType) throws CertificateException {
+      }
 
-			public void checkServerTrusted(X509Certificate[] chain,
-					String authType) throws CertificateException {
-				upstream.checkServerTrusted(chain, authType);
-			}
+      public void checkServerTrusted(X509Certificate[] chain,
+          String authType) throws CertificateException {
+        upstream.checkServerTrusted(chain, authType);
+      }
 
-			public X509Certificate[] getAcceptedIssuers() {
-				return upstream.getAcceptedIssuers();
-			}
-		};
+      public X509Certificate[] getAcceptedIssuers() {
+        return upstream.getAcceptedIssuers();
+      }
+    };
 
-		sslContext.init(null, new TrustManager[] { tm }, null);
-		setHostnameVerifier(SSLSocketFactory.STRICT_HOSTNAME_VERIFIER);
-	}
-	
-	public SecureSSLSocketFactory(SSLContext context)
-			throws KeyManagementException, NoSuchAlgorithmException,
-			KeyStoreException, UnrecoverableKeyException {
-		super((KeyStore)null);
-		sslContext = context;
-	}
+    sslContext.init(null, new TrustManager[] { tm }, null);
+    setHostnameVerifier(SSLSocketFactory.STRICT_HOSTNAME_VERIFIER);
+  }
+  
+  public SecureSSLSocketFactory(SSLContext context)
+      throws KeyManagementException, NoSuchAlgorithmException,
+      KeyStoreException, UnrecoverableKeyException {
+    super((KeyStore)null);
+    sslContext = context;
+  }
 
-	@Override
-	public Socket createSocket(Socket socket, String host, int port,
-			boolean autoClose) throws IOException, UnknownHostException {
-		return sslContext.getSocketFactory().createSocket(socket, host, port,
-				autoClose);
-	}
+  @Override
+  public Socket createSocket(Socket socket, String host, int port,
+      boolean autoClose) throws IOException, UnknownHostException {
+    return sslContext.getSocketFactory().createSocket(socket, host, port,
+        autoClose);
+  }
 
-	@Override
-	public Socket createSocket() throws IOException {
-		return sslContext.getSocketFactory().createSocket();
-	}
+  @Override
+  public Socket createSocket() throws IOException {
+    return sslContext.getSocketFactory().createSocket();
+  }
 }

@@ -138,23 +138,23 @@ class Example implements Runnable{
     }
 
     private void search() throws StorageApiException {
-    	String query = sc.nextLine().trim();
-    	List<Hit> hits = api.search(query);
-    	if(hits != null) {
-	    	for(Hit h: hits) {
-	    		System.out.println(h.getMount().getName() + ":" + h.getPath());
-	    	}
-    	} else {
-    		System.out.println("No hits.");
-    	}
+      String query = sc.nextLine().trim();
+      List<Hit> hits = api.search(query);
+      if(hits != null) {
+        for(Hit h: hits) {
+          System.out.println(h.getMount().getName() + ":" + h.getPath());
+        }
+      } else {
+        System.out.println("No hits.");
+      }
         System.out.println("\n");    
     }
     
     private void attributes() throws StorageApiException {
-    	HashMap attributes = api.getAttributes();
-    	for(Object key: attributes.keySet()) {
-    		System.out.println(key + ": " + attributes.get(key));
-    	}
+      HashMap attributes = api.getAttributes();
+      for(Object key: attributes.keySet()) {
+        System.out.println(key + ": " + attributes.get(key));
+      }
     }
     
     public void run() {
@@ -193,11 +193,11 @@ class Example implements Runnable{
                         upload();
                         break;
                     case "search":
-                    	search();
-                    	break;
+                      search();
+                      break;
                     case "attributes":
-                    	attributes();
-                    	break;
+                      attributes();
+                      break;
                     default:
                         printHelp();
                 }
