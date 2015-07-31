@@ -1,6 +1,7 @@
 package net.koofr.api.v2;
 
 import net.koofr.api.v2.util.HttpsClientHelper;
+import net.koofr.api.v2.util.KoofrTokenAuthenticator;
 
 import org.restlet.Client;
 import org.restlet.Context;
@@ -13,24 +14,37 @@ import org.restlet.ext.jackson.JacksonConverter;
  */
 public class DefaultClientFactory {
 
-    private static StorageApi create(String hostname, KoofrAuthenticator authenticator) {
-        Engine.getInstance().getRegisteredConverters().clear();
-        Engine.getInstance().getRegisteredConverters().add(new JacksonConverter());
+  private static Client prepareClient() {
+    Engine.getInstance().getRegisteredConverters().clear();
+    Engine.getInstance().getRegisteredConverters().add(new JacksonConverter());
 
-        Engine.getInstance().getRegisteredClients().clear();
-        Engine.getInstance().getRegisteredClients().add(new HttpsClientHelper(null));
+    Engine.getInstance().getRegisteredClients().clear();
+    Engine.getInstance().getRegisteredClients().add(new HttpsClientHelper(null));
+    
+    Context restletContext = new Context();
+    restletContext.getParameters().set("maxTotalConnections", "16");
+    restletContext.getParameters().set("maxConnectionsPerHost", "8");        
+    Client client = new Client(restletContext, java.util.Arrays.asList(Protocol.HTTPS),
+        HttpsClientHelper.class.getName());
 
-        Engine.getInstance().getRegisteredAuthenticators().clear();
-        Engine.getInstance().getRegisteredAuthenticators().add(authenticator);
+    return client;
+  }
+  
+    public static OAuthStorageApi createOAuth(String hostname) {
+      Client client = prepareClient();
 
-        Context restletContext = new Context();
-        restletContext.getParameters().set("maxTotalConnections", "16");
-        restletContext.getParameters().set("maxConnectionsPerHost", "8");        
-        Client client = new Client(restletContext, java.util.Arrays.asList(Protocol.HTTPS), HttpsClientHelper.class.getName());
-
-        return new StorageApi("https://" + hostname, client);
+      return new OAuthStorageApi("https://" + hostname, client);
     }
 
+    private static TokenStorageApi createToken(String hostname, KoofrTokenAuthenticator authenticator) {
+      Engine.getInstance().getRegisteredAuthenticators().clear();
+      Engine.getInstance().getRegisteredAuthenticators().add(authenticator);      
+
+      Client client = prepareClient();      
+      
+      return new TokenStorageApi("https://" + hostname, client);
+    }
+    
     /**
      * Produce a client and configure it using an existing authentication token.
      * This is the recommended way of creating clients.
@@ -39,9 +53,9 @@ public class DefaultClientFactory {
      * @param authToken Existing authentication token
      * @return Authenticated client
      */
-    public static StorageApi create(String hostname, String authToken) {
-        KoofrAuthenticator authenticator = new KoofrAuthenticator();
-        StorageApi api = create(hostname, authenticator);
+    public static StorageApi createToken(String hostname, String authToken) {
+        KoofrTokenAuthenticator authenticator = new KoofrTokenAuthenticator();
+        TokenStorageApi api = createToken(hostname, authenticator);
         authenticator.setToken(authToken);
         api.setAuthToken(authToken);
         return api;
@@ -60,12 +74,14 @@ public class DefaultClientFactory {
      * @return Authenticated client
      * @throws StorageApiException
      */
-    public static StorageApi create(String hostname, String username, String password) throws StorageApiException {
-        KoofrAuthenticator authenticator = new KoofrAuthenticator();
-        StorageApi api = create(hostname, authenticator);
+    public static StorageApi createToken(String hostname, String username, String password) throws StorageApiException {
+        KoofrTokenAuthenticator authenticator = new KoofrTokenAuthenticator();
+        TokenStorageApi api = createToken(hostname, authenticator);
         String token = api.authenticate("https://" + hostname + "/token", username, password);
         api.setAuthToken(token);
         authenticator.setToken(token);
         return api;
     }
+    
+    
 }

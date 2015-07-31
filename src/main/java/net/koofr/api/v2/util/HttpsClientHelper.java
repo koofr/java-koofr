@@ -9,12 +9,12 @@ import org.restlet.ext.httpclient.HttpClientHelper;
 @SuppressWarnings("deprecation")
 public class HttpsClientHelper extends HttpClientHelper {
 
-	public HttpsClientHelper(Client client) {
-		super(client);
-	}
+  public HttpsClientHelper(Client client) {
+    super(client);
+  }
 
-	protected void configure(SchemeRegistry schemeRegistry) {
-		schemeRegistry.register(new Scheme("https", Https.getFactory(), 443));
-		schemeRegistry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
-	}
+  protected void configure(SchemeRegistry schemeRegistry) {
+    schemeRegistry.register(new Scheme("https", Https.getFactory(), 443));
+    schemeRegistry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
+  }
 }

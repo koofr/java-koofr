@@ -4,18 +4,18 @@ import org.apache.http.conn.ssl.SSLSocketFactory;
 
 public class Https {
 
-	private static SSLSocketFactory factory;
+  private static SSLSocketFactory factory;
 
-	public synchronized static SSLSocketFactory getFactory() {
-		if (factory == null) {
-			try {
-				factory = new SecureSSLSocketFactory();
-			} catch (Exception e) { // Gotta Catch 'Em All
-				e.printStackTrace();
-			}
-		}
+  public synchronized static SSLSocketFactory getFactory() {
+    if (factory == null) {
+      try {
+        factory = new SecureSSLSocketFactory();
+      } catch (Exception e) { // Gotta Catch 'Em All
+        e.printStackTrace();
+      }
+    }
 
-		return factory;
-	}
+    return factory;
+  }
 
 }

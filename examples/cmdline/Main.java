@@ -23,13 +23,12 @@ public class Main {
         if(args.length == 2) { //using token
             String host = args[0];
             String token = args[1];
-            api = DefaultClientFactory.create(host, token);
+            api = DefaultClientFactory.createToken(host, token);
         } else if (args.length == 3) { // using username/pass
             String host = args[0];
             String username = args[1];
             String password = args[2];
-            api = DefaultClientFactory.create(host, username, password);
-            System.out.println("Auth token: " + api.getAuthToken());
+            api = DefaultClientFactory.createToken(host, username, password);
         } else {
             System.out.println("Pass in hostname and auth token or username/pass");
             System.exit(1);
@@ -138,23 +137,23 @@ class Example implements Runnable{
     }
 
     private void search() throws StorageApiException {
-    	String query = sc.nextLine().trim();
-    	List<Hit> hits = api.search(query);
-    	if(hits != null) {
-	    	for(Hit h: hits) {
-	    		System.out.println(h.getMount().getName() + ":" + h.getPath());
-	    	}
-    	} else {
-    		System.out.println("No hits.");
-    	}
+      String query = sc.nextLine().trim();
+      List<Hit> hits = api.search(query);
+      if(hits != null) {
+        for(Hit h: hits) {
+          System.out.println(h.getMount().getName() + ":" + h.getPath());
+        }
+      } else {
+        System.out.println("No hits.");
+      }
         System.out.println("\n");    
     }
     
     private void attributes() throws StorageApiException {
-    	HashMap attributes = api.getAttributes();
-    	for(Object key: attributes.keySet()) {
-    		System.out.println(key + ": " + attributes.get(key));
-    	}
+      HashMap attributes = api.getAttributes();
+      for(Object key: attributes.keySet()) {
+        System.out.println(key + ": " + attributes.get(key));
+      }
     }
     
     public void run() {
@@ -193,11 +192,11 @@ class Example implements Runnable{
                         upload();
                         break;
                     case "search":
-                    	search();
-                    	break;
+                      search();
+                      break;
                     case "attributes":
-                    	attributes();
-                    	break;
+                      attributes();
+                      break;
                     default:
                         printHelp();
                 }
