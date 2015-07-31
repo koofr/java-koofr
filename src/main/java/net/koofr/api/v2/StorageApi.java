@@ -35,7 +35,7 @@ import net.koofr.api.v2.resources.UserInfo;
 import net.koofr.api.v2.transfer.ProgressListener;
 import net.koofr.api.v2.transfer.upload.MultipartEntityProgress;
 import net.koofr.api.v2.transfer.upload.UploadData;
-import net.koofr.api.v2.util.CustomClientResource;
+import net.koofr.api.v2.util.TokenClientResource;
 import net.koofr.api.v2.util.Https;
 import net.koofr.api.v2.util.HttpsClientHelper;
 import net.koofr.api.v2.util.Log;
@@ -53,6 +53,7 @@ import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.BasicClientConnectionManager;
 import org.apache.http.impl.conn.SingleClientConnManager;
+import org.apache.http.message.AbstractHttpMessage;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpParams;
 import org.restlet.Client;
@@ -79,17 +80,15 @@ import org.restlet.ext.oauth.internal.Token;
 /* TODO: (re)enable HTTP Basic and Koofr token authentication methods */
 
 @SuppressWarnings({"unused", "deprecation"})
-public class StorageApi {
+public abstract class StorageApi {
   public static final String TAG = StorageApi.class.getName();
 
   public static final int DOWNLOAD_BUFFER_SIZE = 64*1024;
 
-  private String clientId, clientSecret;
-  private OAuthToken oauthToken;
-  private String baseUrl;
-  private Client client;
-  private Log log;
-  private StorageApiExceptionHandler xhandler;
+  protected String baseUrl;
+  protected Client client;
+  protected Log log;
+  protected StorageApiExceptionHandler xhandler;
   
   public void setLog(Log log) {
     this.log = log;
@@ -125,142 +124,36 @@ public class StorageApi {
       }
     }
   }
-
-  public void setClientCredentials(String id, String secret) {
-    clientId = id;
-    clientSecret = secret;
-  }
   
-  public class OAuthToken {
-    public String refresh;
-    public String access;
-    public long expires;    
-    
-    protected Token token;
-    
-    public OAuthToken(String refresh) {
-      this.refresh = refresh;
-      this.access = null;
-      this.expires = 0L;
-      this.token = null;
-    }
-    
-    protected OAuthToken(Token token) {
-      this.token = token;
-      refresh = token.getRefreshToken();
-      access  = token.getAccessToken();
-      expires = new Date().getTime() + token.getExpirePeriod()*1000;
-    }
-  }
-  
-  public String getOAuthAccessToken() {
-    if(null != oauthToken) {
-      return oauthToken.access;
-    } else {
-      return null;
-    }
-  }
-
-  public String getOAuthRefreshToken() {
-    if(null != oauthToken) {
-      return oauthToken.refresh;
-    } else {
-      return null;
-    }
-  }
-  
-  private long EXPIRATION_THRESHOLD = 5*60*1000L;
-  
-  private boolean renewIfNeccessary() throws StorageApiException {
-    if(oauthToken != null) {
-      if(oauthToken.access == null ||
-         oauthToken.token == null ||
-          oauthToken.expires - EXPIRATION_THRESHOLD > new Date().getTime()) {
-        return false;
-      }
-    }
-    if(oauthToken == null || oauthToken.refresh == null) {
-      throw new StorageApiException(new ResourceException(401));
-    }
-    setOAuthRefreshToken(oauthToken.refresh);
-    return true;
-  }
-  
-  public void clearOAuthTokens() {
-    oauthToken = null;
-  }
-  
-  public OAuthToken setOAuthCode(String code, String redirectUri) throws StorageApiException {
-    Reference ref = new Reference(new Reference(baseUrl), "/oauth2/token");
-    AccessTokenClientResource res = new AccessTokenClientResource(ref);
-    res.setClientCredentials(clientId, clientSecret);
-    OAuthParameters params = new OAuthParameters();
-    params.code(code);
-    params.grantType(GrantType.authorization_code);
-    params.add(OAuthParameters.CLIENT_ID, clientId);
-    params.add(OAuthParameters.CLIENT_SECRET, clientSecret);
-    params.redirectURI(redirectUri);
-    try {
-      Token token = res.requestToken(params);   
-      oauthToken = new OAuthToken(token);
-      return oauthToken;
-    } catch(Exception ex) {
-      throw new StorageApiException(ex);
-    }
-  }
-  
-  public OAuthToken setOAuthRefreshToken(String refresh) throws StorageApiException {
-    Reference ref = new Reference(new Reference(baseUrl), "/oauth2/token");
-    AccessTokenClientResource res = new AccessTokenClientResource(ref);
-    res.setClientCredentials(clientId, clientSecret);
-    OAuthParameters params = new OAuthParameters();
-    params.refreshToken(refresh);
-    params.grantType(GrantType.refresh_token);
-    params.add(OAuthParameters.CLIENT_ID, clientId);
-    params.add(OAuthParameters.CLIENT_SECRET, clientSecret);
-    try {
-      Token token = res.requestToken(params);   
-      oauthToken = new OAuthToken(token);
-      return oauthToken;
-    } catch(Exception ex) {
-      throw new StorageApiException(ex);
-    }   
-  }
+  protected abstract void prepareRequest() throws StorageApiException ;
+  protected abstract ClientResource createResource(Reference ref) throws StorageApiException ;
+  protected abstract void prepareHttpMessage(AbstractHttpMessage m) throws StorageApiException ;
   
   protected ClientResource getResource(String path) throws StorageApiException {
     debug(TAG, "Resource path: " + path);
-    renewIfNeccessary();
+    prepareRequest();
     Reference ref = new Reference(new Reference(baseUrl), path);
-    CustomClientResource res = new CustomClientResource(ref);
-    if(oauthToken != null) {
-      res.setToken(oauthToken.token);
-    }
+    ClientResource res = createResource(ref);
     res.setNext(client);
     return res;
   }
 
   protected ClientResource getResource(String path, String... query) throws StorageApiException {
     debug(TAG, "Resource path: " + path);
-    renewIfNeccessary();
+    prepareRequest();
     Reference ref = new Reference(new Reference(baseUrl), path);
     for(int i = 0; i < query.length - 1; i += 2) {
       ref = ref.addQueryParameter(query[i], query[i + 1]);
     }
-    CustomClientResource res = new CustomClientResource(ref);
-    if(oauthToken != null) {
-      res.setToken(oauthToken.token);
-    }
+    ClientResource res = createResource(ref);
     res.setNext(client);
     return res;
   }
   
   protected ClientResource getResource(Reference ref) throws StorageApiException {
     debug(TAG, "Resource path: " + ref.getPath());
-    renewIfNeccessary();
-    CustomClientResource res = new CustomClientResource(ref);
-    if(oauthToken != null) {
-      res.setToken(oauthToken.token);
-    }
+    prepareRequest();    
+    ClientResource res = createResource(ref);
     res.setNext(client);
     return res;
   }
@@ -1592,7 +1485,7 @@ public class StorageApi {
   public boolean filesUpload(String mountId, String path, UploadData uploadData,
       ProgressListener listener) throws StorageApiException {
     try {
-      renewIfNeccessary();
+      prepareRequest();
       String uploadUrl = baseUrl + "/content/api/v2/mounts/" + mountId + "/files/put";      
       try {
         uploadUrl = uploadUrl +
@@ -1604,11 +1497,7 @@ public class StorageApi {
       }
 
       HttpPost upload = new HttpPost(uploadUrl);
-      if(oauthToken != null) {
-        upload.addHeader("Authorization", "Bearer " + oauthToken.access);
-      } else {
-        throw new StorageApiException("No authorization token.");
-      }
+      prepareHttpMessage(upload);
 
       MultipartEntityProgress form = new MultipartEntityProgress(
           HttpMultipartMode.BROWSER_COMPATIBLE, listener);
@@ -1722,7 +1611,7 @@ public class StorageApi {
   public InputStream filesDownload(String mountId, String path,
       ProgressListener listener, String thumbSize) throws StorageApiException {
     try {
-      renewIfNeccessary();
+      prepareRequest();
       
       BufferedInputStream inStream;     
 
@@ -1739,9 +1628,7 @@ public class StorageApi {
       }
 
       final HttpGet request = new HttpGet(downloadUrl);
-      if(oauthToken != null) {
-        request.addHeader("Authorization", "Bearer " + oauthToken.access);
-      }
+      prepareHttpMessage(request);
 
       HttpClient client = getHttpClient();
 
@@ -1778,7 +1665,7 @@ public class StorageApi {
   public String getMyIp() throws StorageApiException {
     try {
       Reference ref = new Reference(baseUrl + "/ip");
-      ClientResource res = new CustomClientResource(ref);   
+      ClientResource res = new TokenClientResource(ref);   
       res.setNext(client);
       return res.get().getText();
     } catch(IOException e) {

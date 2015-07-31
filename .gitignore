@@ -1,2 +1,8 @@
 target
 /.idea*
+.classpath
+.project
+examples/cmdline/.classpath
+examples/cmdline/.project
+examples/info/.classpath
+examples/info/.project

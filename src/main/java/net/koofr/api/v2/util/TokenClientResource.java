@@ -7,11 +7,10 @@ import org.restlet.engine.header.HeaderConstants;
 import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
 import org.restlet.util.Series;
-import org.restlet.ext.oauth.ProtectedClientResource;
 
-public class CustomClientResource extends ProtectedClientResource {
+public class TokenClientResource extends ClientResource {
 
-  public CustomClientResource(Reference reference) {
+  public TokenClientResource(Reference reference) {
     super(reference);
   }
 

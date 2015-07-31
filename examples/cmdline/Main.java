@@ -20,18 +20,17 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) throws StorageApiException {
         StorageApi api = null;
-        if(args.length == 2) { // using code
+        if(args.length == 2) { //using token
             String host = args[0];
-            String code = args[1];
-            api = DefaultClientFactory.create(host);
-            api.setOAuthCode(code);
-        } else if (args.length == 3) { // using access/refresh token
+            String token = args[1];
+            api = DefaultClientFactory.createToken(host, token);
+        } else if (args.length == 3) { // using username/pass
             String host = args[0];
-            String access = args[1];
-            String refresh = args[2];
-            api = DefaultClientFactory.create(host);
-            api.setOAuthRefreshToken(refresh);
+            String username = args[1];
+            String password = args[2];
+            api = DefaultClientFactory.createToken(host, username, password);
         } else {
+            System.out.println("Pass in hostname and auth token or username/pass");
             System.exit(1);
         }
 
