@@ -2,6 +2,7 @@ package net.koofr.api.v2.transfer.upload;
 
 import java.io.InputStream;
 
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.content.AbstractContentBody;
 import org.apache.http.entity.mime.content.InputStreamBody;
 
@@ -19,7 +20,7 @@ public class StreamUploadData implements UploadData {
 
   @Override
   public AbstractContentBody getBody() {
-    return new InputStreamBody(stream, mimeType, fileName);
+    return new InputStreamBody(stream, ContentType.create(mimeType), fileName);
   }
   
   @Override

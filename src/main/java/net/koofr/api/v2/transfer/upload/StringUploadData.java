@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.content.AbstractContentBody;
 import org.apache.http.entity.mime.content.StringBody;
 
@@ -41,7 +42,7 @@ public class StringUploadData implements UploadData {
 
     public NamedStringBody(String text, String mimeType, String fileName)
         throws UnsupportedEncodingException {
-      super(text, mimeType, Charset.defaultCharset());
+      super(text, ContentType.create(mimeType));
       this.fileName = fileName;
     }
 
