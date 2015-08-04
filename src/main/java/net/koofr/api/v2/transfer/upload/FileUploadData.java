@@ -2,6 +2,7 @@ package net.koofr.api.v2.transfer.upload;
 
 import java.io.File;
 
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.content.AbstractContentBody;
 import org.apache.http.entity.mime.content.FileBody;
 
@@ -13,10 +14,9 @@ public class FileUploadData implements UploadData {
 
   public FileUploadData(String filePath, String mimeType) {
     this.filePath = filePath;
-    this.mimeType = mimeType;
-    
+    this.mimeType = mimeType;    
   }
-  
+
   public FileUploadData(File file, String mimeType) {
     this(file.getAbsolutePath(), mimeType);
   }
@@ -32,7 +32,7 @@ public class FileUploadData implements UploadData {
   @Override
   public AbstractContentBody getBody() {
     File file = new File(filePath);
-    return new FileBody(file, mimeType);
+    return new FileBody(file, ContentType.create(mimeType), file.getName());
   }
 
   @Override
