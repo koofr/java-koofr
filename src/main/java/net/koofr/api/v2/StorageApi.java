@@ -1665,7 +1665,7 @@ public abstract class StorageApi {
   public String getMyIp() throws StorageApiException {
     try {
       Reference ref = new Reference(baseUrl + "/ip");
-      ClientResource res = new TokenClientResource(ref);   
+      ClientResource res = createResource(ref);   
       res.setNext(client);
       return res.get().getText();
     } catch(IOException e) {
