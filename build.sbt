@@ -2,7 +2,7 @@ organization := "net.koofr"
 
 name := "java-koofr"
 
-version := "2.0.1"
+version := "2.0.2"
 
 resolvers += "restlet" at "http://maven.restlet.org"
 
@@ -39,7 +39,6 @@ pomExtra :=
         <name>Andraz Bajt</name>
       </developer>
     </developers>
-
 
 libraryDependencies ++= Seq(
   "org.apache.httpcomponents" % "httpclient" % "4.2.1",
