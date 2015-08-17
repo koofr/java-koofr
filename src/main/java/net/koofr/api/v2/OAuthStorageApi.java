@@ -98,7 +98,7 @@ public class OAuthStorageApi extends StorageApi {
         return false;
       }
     }
-    if(oauthToken == null || oauthToken.refresh == null) {
+    if(oauthToken.refresh == null) {
       throw new StorageApiException(new ResourceException(401));
     }
     setOAuthRefreshToken(oauthToken.refresh);
