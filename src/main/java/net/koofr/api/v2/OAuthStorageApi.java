@@ -92,13 +92,12 @@ public class OAuthStorageApi extends StorageApi {
   
   private boolean renewIfNeccessary() throws StorageApiException {
     if(oauthToken != null) {
-      if(oauthToken.access == null ||
-         oauthToken.token == null ||
+      if(oauthToken.access != null && oauthToken.token != null ||
           oauthToken.expires - EXPIRATION_THRESHOLD > new Date().getTime()) {
         return false;
       }
     }
-    if(oauthToken.refresh == null) {
+    if(oauthToken == null || oauthToken.refresh == null) {
       throw new StorageApiException(new ResourceException(401));
     }
     setOAuthRefreshToken(oauthToken.refresh);
