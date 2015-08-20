@@ -91,15 +91,13 @@ public class OAuthStorageApi extends StorageApi {
   private long EXPIRATION_THRESHOLD = 5*60*1000L;
   
   private boolean renewIfNeccessary() throws StorageApiException {
-    if(oauthToken != null) {
-      if(oauthToken.access == null ||
-         oauthToken.token == null ||
-          oauthToken.expires - EXPIRATION_THRESHOLD > new Date().getTime()) {
-        return false;
-      }
-    }
-    if(oauthToken.refresh == null) {
+    if(oauthToken == null || oauthToken.refresh == null) {
       throw new StorageApiException(new ResourceException(401));
+    }
+    if(oauthToken.access != null &&
+       oauthToken.token != null &&
+       oauthToken.expires - EXPIRATION_THRESHOLD > new Date().getTime()) {
+      return false;
     }
     setOAuthRefreshToken(oauthToken.refresh);
     return true;
