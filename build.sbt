@@ -2,7 +2,7 @@ organization := "net.koofr"
 
 name := "java-koofr"
 
-version := "2.0.4"
+version := "2.1.0"
 
 resolvers += "restlet" at "http://maven.restlet.org"
 

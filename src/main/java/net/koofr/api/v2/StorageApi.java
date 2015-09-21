@@ -35,6 +35,7 @@ import net.koofr.api.v2.resources.UserInfo;
 import net.koofr.api.v2.transfer.ProgressListener;
 import net.koofr.api.v2.transfer.upload.MultipartEntityProgress;
 import net.koofr.api.v2.transfer.upload.UploadData;
+import net.koofr.api.v2.transfer.upload.UploadOptions;
 import net.koofr.api.v2.util.TokenClientResource;
 import net.koofr.api.v2.util.Https;
 import net.koofr.api.v2.util.HttpsClientHelper;
@@ -1482,15 +1483,34 @@ public abstract class StorageApi {
     }
   }
 
-  public boolean filesUpload(String mountId, String path, UploadData uploadData,
+  public int filesUpload(String mountId, String path, UploadData uploadData,
       ProgressListener listener) throws StorageApiException {
+    return filesUpload(mountId, path, uploadData, listener, null);
+  }
+  
+  public int filesUpload(String mountId, String path, UploadData uploadData,
+      ProgressListener listener, UploadOptions options) throws StorageApiException {
     try {
       prepareRequest();
       String uploadUrl = baseUrl + "/content/api/v2/mounts/" + mountId + "/files/put";      
       try {
         uploadUrl = uploadUrl +
           "?path=" + URLEncoder.encode(path, "UTF-8") +
-          "&filename=" + URLEncoder.encode(uploadData.getName(), "UTF-8");          
+          "&filename=" + URLEncoder.encode(uploadData.getName(), "UTF-8");
+        if(options != null) {
+          if(options.overwrite) {
+            uploadUrl += "&overwrite=true";
+          }
+          if(options.overwriteIfSize >= 0) {
+            uploadUrl += "&overwriteIfSize=" + options.overwriteIfSize;
+          }
+          if(options.overwriteIfModified >= 0) {
+            uploadUrl += "&overwriteIfSize=" + options.overwriteIfModified;
+          }
+          if(options.overwriteIfHash != null) {
+            uploadUrl += "&overwriteIfHash=" + URLEncoder.encode(options.overwriteIfHash);
+          }
+        }
       }
       catch(UnsupportedEncodingException ex) {
         throw new StorageApiException(ex);
@@ -1511,7 +1531,7 @@ public abstract class StorageApi {
 
       try {
         HttpResponse resp = client.execute(upload);
-        return resp.getStatusLine().getStatusCode() == 200;
+        return resp.getStatusLine().getStatusCode();
       } catch (Exception e) {
         fireExceptionHandler(e);
         throw new StorageApiException(e);
