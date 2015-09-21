@@ -9,6 +9,7 @@ import net.koofr.api.v2.resources.File;
 import net.koofr.api.v2.transfer.ProgressListener;
 import net.koofr.api.v2.transfer.upload.FileUploadData;
 import net.koofr.api.v2.transfer.upload.UploadData;
+import net.koofr.api.v2.transfer.upload.UploadOptions;
 
 import java.lang.Override;
 import java.lang.StringBuilder;
@@ -131,9 +132,15 @@ class Example implements Runnable{
 
     private void upload() throws StorageApiException {
         String localPath = sc.nextLine().trim();
+        UploadOptions options = new UploadOptions();
+        options.overwrite = true;
         UploadData data = new FileUploadData(localPath);
-        api.filesUpload(this.mountId, this.path, data, new SimpleProgressListener());
-        System.out.println("\n");
+        int rc = api.filesUpload(this.mountId, this.path, data, new SimpleProgressListener(), options);
+        if(rc == 200) {
+          System.out.println("\nOK\n");
+        } else {
+          System.out.println("\nFailed with response " + rc + "\n");
+        }
     }
 
     private void search() throws StorageApiException {
@@ -208,18 +215,17 @@ class Example implements Runnable{
 }
 
 class SimpleProgressListener implements ProgressListener  {
-    private long total = 0;
+  private long total = 0;
 
-    public void transferred(long bytes) {
-        setTotal(total + bytes);
-    }
+  public void transferred(long bytes) {
+    System.out.print("Progress: " + bytes + " bytes\r");
+  }
 
-    public void setTotal(long bytes) {
-        this.total = bytes;
-        System.out.print("Progress: " + bytes + " bytes\r");
-    }
+  public void setTotal(long bytes) {
+    this.total = bytes;
+  }
 
-    public boolean isCanceled() {
-        return false;
-    }
+  public boolean isCanceled() {
+    return false;
+  }
 };
