@@ -110,7 +110,6 @@ public class OAuthStorageApi extends StorageApi {
   public OAuthToken setOAuthCode(String code, String redirectUri) throws StorageApiException {
     Reference ref = new Reference(new Reference(baseUrl), "/oauth2/token");
     AccessTokenClientResource res = new AccessTokenClientResource(ref);
-    res.setClientCredentials(clientId, clientSecret);
     OAuthParameters params = new OAuthParameters();
     params.code(code);
     params.grantType(GrantType.authorization_code);
@@ -129,7 +128,6 @@ public class OAuthStorageApi extends StorageApi {
   public OAuthToken setOAuthRefreshToken(String refresh) throws StorageApiException {
     Reference ref = new Reference(new Reference(baseUrl), "/oauth2/token");
     AccessTokenClientResource res = new AccessTokenClientResource(ref);
-    res.setClientCredentials(clientId, clientSecret);
     OAuthParameters params = new OAuthParameters();
     params.refreshToken(refresh);
     params.grantType(GrantType.refresh_token);
