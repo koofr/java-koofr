@@ -141,6 +141,5 @@ public class OAuthStorageApi extends StorageApi {
       throw new StorageApiException(ex);
     }   
   }
-  
-  
+
 }
