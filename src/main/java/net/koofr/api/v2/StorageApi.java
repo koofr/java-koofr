@@ -1429,9 +1429,53 @@ public abstract class StorageApi {
     }
   }
   
-  public List<Hit> search(String query) throws StorageApiException {
+  /*
+  GET /api/v2/search controllers.api.v2.Search.search(query: Option[String] ?= None, offset: Int ?= 0, limit: Int ?= 256, sortField ?= "", sortDir ?= "", mime ?= "", mountId ?= "", path ?= "")
+  */
+
+  private String[] searchUrlParameters(String query, Integer offset, Integer limit, String mimeType, String sortField, String sortDir, String mountId, String path) {
+    ArrayList<String> params = new ArrayList<String>();
+    
+    if(offset != null) {
+      params.add("offset");
+      params.add(offset.toString());
+    }
+    if(limit != null) {
+      params.add("limit");
+      params.add(limit.toString());
+    }
+    if(sortField != null) {
+      params.add("sortField");
+      params.add(sortField);
+    }
+    if(sortDir != null) {
+      params.add("sortDir");
+      params.add(sortDir);
+    }
+    if(mimeType != null) {
+      params.add("mimeType");
+      params.add(mimeType);
+    }
+    if(query != null) {
+      params.add("query");
+      params.add(query);
+    }
+    if(mountId != null) {
+      params.add("mountId");
+      params.add(mountId);
+    }
+    if(path != null) {
+      params.add("path");
+      params.add(path);
+    }
+    
+    String[] rv = new String[params.size()];
+    return params.toArray(rv);
+  }
+  
+  public List<Hit> search(String query, Integer offset, Integer limit, String mimeType, String sortField, String sortDir, String mountId, String path) throws StorageApiException {
     try {
-      QueryResults r = getResource("/api/v2/search", "query", query).get(QueryResults.class);
+      QueryResults r = getResource("/api/v2/search", searchUrlParameters(query, offset, limit, mimeType, sortField, sortDir, mountId, path)).get(QueryResults.class);
       if(null != r) {
         List<Hit> rv = new ArrayList<Hit>();
         for(Hit h: r.hits) {
@@ -1452,27 +1496,12 @@ public abstract class StorageApi {
     }               
   }
 
+  public List<Hit> search(String query) throws StorageApiException {
+    return search(query, null, null, null, null, null, null, null);
+  }
+  
   public List<Hit> search(String query, String mountId, String path) throws StorageApiException {
-    try {
-      QueryResults r = getResource("/api/v2/search", "query", query, "mountId", mountId, "path", path).get(QueryResults.class);
-      if(null != r) {
-        List<Hit> rv = new ArrayList<Hit>();
-        for(Hit h: r.hits) {
-          if(r.mounts.containsKey(h.getMountId())) {
-            h.setMount(r.mounts.get(h.getMountId()));
-            rv.add(h);
-          }
-        }
-        return rv;
-      }
-      else {
-        return null;
-      }
-    }
-    catch(ResourceException ex) {
-      fireExceptionHandler(ex);
-      throw new StorageApiException(ex);
-    }               
+    return search(query, null, null, null, null, null, mountId, path);
   }
 
   public boolean checkAuthentication() throws StorageApiException {
