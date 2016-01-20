@@ -66,4 +66,6 @@ To build jars use
 
 ## Maven
 
-Prebuilt jars are available for maven at [JCenter](https://bintray.com/bintray/jcenter), group ID `net.koofr`, artefact ID `java-koofr`
+Prebuilt jars are available for maven at [JCenter](https://bintray.com/koofr/maven/java-koofr/view), group ID `net.koofr`, artefact ID `java-koofr`
+
+
