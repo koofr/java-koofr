@@ -1734,4 +1734,15 @@ public abstract class StorageApi {
     }
   }
   
+  @SuppressWarnings("rawtypes")
+  public HashMap getAppConfig() throws StorageApiException {
+    try {
+      return getResource("/api/v2/user/appconfig").get(HashMap.class);
+    }
+    catch(Exception ex) {
+      fireExceptionHandler(ex);
+      throw new StorageApiException(ex);
+    }
+  }
+  
 }
