@@ -12,9 +12,9 @@ crossPaths := false
 
 lazy val sdk = project in file(".")
 
-javacOptions ++= Seq("-source", "1.6")
+// javacOptions ++= Seq("-source", "1.6")
 
-javacOptions in compile ++= Seq("-target", "1.6")
+// javacOptions in compile ++= Seq("-target", "1.6")
 
 seq(bintraySettings:_*)
 

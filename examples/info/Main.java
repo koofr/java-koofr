@@ -1,26 +1,24 @@
 package info;
 
-import net.koofr.api.v2.StorageApi;
-import net.koofr.api.v2.DefaultClientFactory;
-import net.koofr.api.v2.StorageApiException;
+import net.koofr.api.auth.oauth2.OAuth2Authenticator;
+import net.koofr.api.http.Client;
+import net.koofr.api.http.impl.basic.BasicClient;
+import net.koofr.api.rest.v2.Api;
 
 public class Main {
-  public static void main(String[] args) throws StorageApiException {
-    StorageApi api = null;
-    if(args.length == 2) { //using token
-        String host = args[0];
-        String token = args[1];
-        api = DefaultClientFactory.createToken(host, token);
-    } else if (args.length == 3) { // using username/pass
-        String host = args[0];
-        String username = args[1];
-        String password = args[2];
-        api = DefaultClientFactory.createToken(host, username, password);
-    } else {
-        System.out.println("Pass in hostname and auth token or username/pass");
-        System.exit(1);
+  public static void main(String[] args) throws Exception {
+    if(args.length != 4) {
+      System.err.println("Usage: info <token-url> <client-id> <client-secret> <grant-code>");
     }
-
-    System.out.println(api.getUserInfo());
+    Client c = new BasicClient();
+    OAuth2Authenticator a = new OAuth2Authenticator(c, args[0], args[1], args[2], "urn:ietf:wg:oauth:2.0:oob");
+    a.setGrantCode(args[3]);
+    System.out.println("Refresh token: " + a.getRefreshToken());
+    System.out.println("Access token: " + a.getAccessToken());
+    System.out.println("Expiration: " + a.getExpirationDate());
+    Api api = new Api("https://stage.koofr.net/api/v2", a, c);
+    api.user().info();
   }
 }
+
+

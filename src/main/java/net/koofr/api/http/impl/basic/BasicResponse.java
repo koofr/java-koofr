@@ -3,6 +3,8 @@ package net.koofr.api.http.impl.basic;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.util.List;
+import java.util.Map;
 
 import net.koofr.api.http.Response;
 
@@ -24,4 +26,12 @@ public class BasicResponse implements Response {
     return cnx.getInputStream();
   }
 
+  public Map<String, List<String>>getHeaders() {
+    return cnx.getHeaderFields();    
+  }
+  
+  public String getHeader(String name) {
+    return cnx.getHeaderField(name);
+  }
+  
 }
