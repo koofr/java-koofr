@@ -8,9 +8,12 @@ import java.util.List;
 import java.util.Map;
 
 import net.koofr.api.auth.Authenticator;
+import net.koofr.api.http.Body;
 import net.koofr.api.http.Client;
+import net.koofr.api.http.HttpException;
 import net.koofr.api.http.Request;
 import net.koofr.api.http.Response;
+import net.koofr.api.http.content.JsonBody;
 import net.koofr.api.json.JsonException;
 import net.koofr.api.json.Transmogrifier;
 import net.koofr.api.util.Log;
@@ -23,7 +26,7 @@ public abstract class Resource {
   String url;
 
   Log log = new StdLog();
-  boolean debugContent = true;
+  boolean debugContent = false;
 
   public Resource(Authenticator auth, Client httpClient) {
     this.auth = auth;
@@ -41,7 +44,7 @@ public abstract class Resource {
     this.url = r.url + morePath;
   }
   
-  protected Response getResponse() throws IOException {
+  protected Response httpGet() throws IOException {
     Request r = httpClient.get(url);
     if(auth != null) {
       auth.arm(r);
@@ -49,18 +52,56 @@ public abstract class Resource {
     return r.execute();
   }
 
-  protected <T> T getMapped(Class<T> c) throws JsonException, IOException {
-    return mapJsonResponse(getResponse(), c);
+  protected <T> T getResult(Class<T> c) throws JsonException, IOException {
+    return mapJsonResponse(httpGet(), c);
+  }
+
+  protected void getNoResult() throws JsonException, IOException {
+    mapNoResponse(httpGet());
+  }
+  
+  protected Response httpPut() throws IOException {
+    Request r = httpClient.put(url);
+    if(auth != null) {
+      auth.arm(r);
+    }
+    return r.execute();    
+  }
+
+  protected Response httpPut(Body body) throws IOException {
+    Request r = httpClient.put(url);
+    if(auth != null) {
+      auth.arm(r);
+    }
+    return r.execute(body);    
+  }  
+  
+  protected void putJsonNoResult(Object body) throws JsonException, IOException {
+    mapNoResponse(httpPut(new JsonBody(Transmogrifier.mapObject(body))));
+  }
+  
+  protected void mapNoResponse(Response r) throws IOException {
+    if(debugContent) {
+      logResponse(r, log);
+      if(r.getStatus()/100 != 2) {
+        throw new HttpException(r);
+      }      
+    } else {
+      if(r.getStatus()/100 != 2) {
+        throw new HttpException(r);
+      }
+    }
   }
   
   protected <T> T mapJsonResponse(Response r, Class<T> c) throws JsonException, IOException {
-    log.debug("Content type: " + r.getHeader("Content-Type"));
     String contentType = r.getHeader("Content-Type");
     Map<String, List<String>> headers = r.getHeaders();
-    for(String h: headers.keySet()) {
-      log.debug("Header: " + h);
-      for(String v: headers.get(h)) {
-        log.debug("  " + v);
+    if(debugContent) {
+      for(String h: headers.keySet()) {
+        log.debug("Header: " + h);
+        for(String v: headers.get(h)) {
+          log.debug("  " + v);
+        }
       }
     }
     if(contentType == null || !contentType.startsWith("application/json")) {
@@ -68,12 +109,12 @@ public abstract class Resource {
     }
     if(debugContent) {
       String body = logResponse(r, log);
-      return Transmogrifier.mapJsonResponse(new ByteArrayInputStream(body.getBytes("UTF-8")), c);
+      return Transmogrifier.mappedJsonResponse(new ByteArrayInputStream(body.getBytes("UTF-8")), c);
     } else {
-      return Transmogrifier.mapJsonResponse(r.getInputStream(), c);
+      return Transmogrifier.mappedJsonResponse(r.getInputStream(), c);
     }
   }
-  
+
   protected String logResponse(Response r, Log l) {
     try {
       l.debug("Response status code: " + r.getStatus());

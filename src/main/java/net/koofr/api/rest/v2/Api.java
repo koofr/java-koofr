@@ -10,8 +10,8 @@ public class Api extends Resource {
     url = baseUrl; /* i.e. https://stage.koofr.net/api/v2 */
   }
   
-  public User user() {
-    return new User(this);
+  public RUser user() {
+    return new RUser(this);
   }
   
 }
