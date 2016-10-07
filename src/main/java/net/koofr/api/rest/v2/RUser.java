@@ -5,8 +5,10 @@ import java.util.Map;
 
 import net.koofr.api.json.JsonBase;
 import net.koofr.api.json.JsonException;
+import net.koofr.api.rest.v2.data.Bookmarks;
 import net.koofr.api.rest.v2.data.ConnectionList;
 import net.koofr.api.rest.v2.data.Self;
+import net.koofr.api.rest.v2.data.Bookmarks.Bookmark;
 
 public class RUser extends Resource {
 
@@ -18,10 +20,10 @@ public class RUser extends Resource {
     return getResult(Self.class); 
   }
 
-  public class RConnections extends Resource {
+  public static class RConnections extends Resource {
 
-    public RConnections() {
-      super(RUser.this, "/connections");
+    public RConnections(RUser parent) {
+      super(parent, "/connections");
     }
 
     public ConnectionList get() throws JsonException, IOException {
@@ -31,7 +33,7 @@ public class RUser extends Resource {
   }
   
   public RConnections connections() throws JsonException, IOException {
-    return new RConnections(); 
+    return new RConnections(this); 
   }
 
   public class Edit implements JsonBase {
@@ -126,6 +128,45 @@ public class RUser extends Resource {
   
   public RSettings settings() {
     return new RSettings(this);
+  }
+
+  public class RBookmarks extends Resource {
+
+    public RBookmarks() {
+      super(RUser.this, "/bookmarks");
+    }
+
+    public Bookmarks get() throws JsonException, IOException {
+      return getResult(Bookmarks.class);
+    }
+   
+    public void create(Bookmark bookmark) throws JsonException, IOException {
+      postJsonNoResult(bookmark);
+    }
+    
+    public void edit(Bookmarks bookmarks) throws JsonException, IOException {
+      putJsonNoResult(bookmarks);
+    }
+    
+    public void delete(String mountId, String path) throws IOException {
+      deleteNoResult("mountId", mountId, "path", path);
+    }
+    
+  }
+  
+  public RBookmarks bookmarks() {
+    return new RBookmarks();
+  }
+  
+  public class RActivity extends Resource {
+    
+    public RActivity() {
+      super(RUser.this, "/activity");
+    }
+    
+    public void get() {
+      throw new RuntimeException("Not implemented.");
+    }
   }
   
 }

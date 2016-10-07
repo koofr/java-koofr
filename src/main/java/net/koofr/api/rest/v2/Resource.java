@@ -3,6 +3,8 @@ package net.koofr.api.rest.v2;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +28,7 @@ public abstract class Resource {
   String url;
 
   Log log = new StdLog();
-  boolean debugContent = false;
+  boolean debugContent = true;
 
   public Resource(Authenticator auth, Client httpClient) {
     this.auth = auth;
@@ -44,43 +46,96 @@ public abstract class Resource {
     this.url = r.url + morePath;
   }
   
-  protected Response httpGet() throws IOException {
-    Request r = httpClient.get(url);
+  protected Response httpArmAndExecute(Request r, Body body) throws IOException {
     if(auth != null) {
       auth.arm(r);
+    }  
+    if(body != null) {
+      if(debugContent) {
+        if(body instanceof JsonBody) {
+          log.debug(body.toString());
+        }
+      }
+      return r.execute(body);
+    } else {
+      return r.execute();
     }
-    return r.execute();
   }
 
-  protected <T> T getResult(Class<T> c) throws JsonException, IOException {
-    return mapJsonResponse(httpGet(), c);
-  }
-
-  protected void getNoResult() throws JsonException, IOException {
-    mapNoResponse(httpGet());
+  protected String urlEncode(String s) {
+    try {
+      return URLEncoder.encode(s, "UTF-8");
+    } catch(UnsupportedEncodingException ex) {
+      return s;
+    }
   }
   
-  protected Response httpPut() throws IOException {
-    Request r = httpClient.put(url);
-    if(auth != null) {
-      auth.arm(r);
+  protected String urlWithParameters(String... params) {
+    if(params.length == 0) {
+      return url;
     }
-    return r.execute();    
+    if(params.length % 2 != 0) {
+      throw new IllegalArgumentException("Parameters are not an even-sized array of names and values.");
+    }
+    StringBuilder b = new StringBuilder(url).append("?");
+    for(int i = 0; i < params.length; i += 2) {
+      if(i > 0) {
+        b.append("&");
+      }
+      b.append(params[i]).append("=").append(urlEncode(params[i + 1]));
+    }
+    return b.toString();
+  }
+  
+  protected Response httpGet(String... params) throws IOException {
+    return httpArmAndExecute(httpClient.get(urlWithParameters(params)), null);
+  }
+  
+  protected Response httpPut(String... params) throws IOException {
+    return httpArmAndExecute(httpClient.put(urlWithParameters(params)), null);
   }
 
-  protected Response httpPut(Body body) throws IOException {
-    Request r = httpClient.put(url);
-    if(auth != null) {
-      auth.arm(r);
-    }
-    return r.execute(body);    
+  protected Response httpPut(Body body, String... params) throws IOException {
+    return httpArmAndExecute(httpClient.put(urlWithParameters(params)), body);    
   }  
+    
+  protected Response httpPost(String... params) throws IOException {
+    return httpArmAndExecute(httpClient.post(url), null);
+  }
+
+  protected Response httpPost(Body body, String... params) throws IOException {
+    return httpArmAndExecute(httpClient.post(urlWithParameters(params)), body);
+  }
+
+  protected Response httpDelete(String... params) throws IOException {
+    return httpArmAndExecute(httpClient.delete(urlWithParameters(params)), null);
+  }
+  
+  protected <T> T getResult(Class<T> c) throws JsonException, IOException {
+    return resolveJsonResult(httpGet(), c);
+  }
+
+  protected void getNoResult(String... params) throws IOException {
+    resolveNoResult(httpGet());
+  }
+  
+  protected void deleteNoResult(String... params) throws IOException {
+    resolveNoResult(httpDelete(params));
+  }
   
   protected void putJsonNoResult(Object body) throws JsonException, IOException {
-    mapNoResponse(httpPut(new JsonBody(Transmogrifier.mapObject(body))));
+    resolveNoResult(httpPut(new JsonBody(Transmogrifier.mapObject(body))));
+  }
+
+  protected <T> T postJsonResult(Object body, Class<T> c) throws JsonException, IOException {
+    return resolveJsonResult(httpPost(new JsonBody(Transmogrifier.mapObject(body))), c);
   }
   
-  protected void mapNoResponse(Response r) throws IOException {
+  protected void postJsonNoResult(Object body) throws JsonException, IOException {
+    resolveNoResult(httpPost(new JsonBody(Transmogrifier.mapObject(body))));
+  }
+    
+  protected void resolveNoResult(Response r) throws IOException {
     if(debugContent) {
       logResponse(r, log);
       if(r.getStatus()/100 != 2) {
@@ -93,7 +148,13 @@ public abstract class Resource {
     }
   }
   
-  protected <T> T mapJsonResponse(Response r, Class<T> c) throws JsonException, IOException {
+  protected <T> T resolveJsonResult(Response r, Class<T> c) throws JsonException, IOException {
+    if(r.getStatus()/100 != 2) {
+      if(debugContent) {
+        logResponse(r, log);
+      }
+      throw new HttpException(r);
+    }
     String contentType = r.getHeader("Content-Type");
     Map<String, List<String>> headers = r.getHeaders();
     if(debugContent) {

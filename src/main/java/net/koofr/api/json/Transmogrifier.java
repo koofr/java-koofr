@@ -106,7 +106,9 @@ public class Transmogrifier {
   
   @SuppressWarnings("rawtypes")
   protected static JsonValue mapObjectUnsafe(Object o) throws JsonException, IllegalAccessException {
-    if(o instanceof Integer) {
+    if(o == null) {
+      return null;
+    } else if(o instanceof Integer) {
       return Json.value((Integer)o);
     } else if(o instanceof Long) {
       return Json.value((Long)o);      
@@ -120,7 +122,10 @@ public class Transmogrifier {
       JsonArray rv = new JsonArray();
       int len = Array.getLength(o);
       for(int i = 0; i < len; i++) {
-        rv.add(mapObjectUnsafe(Array.get(o, i)));
+        JsonValue v = mapObjectUnsafe(Array.get(o, i));
+        if(v != null) {
+          rv.add(v);
+        }
       }
       return rv;
     } else if(o instanceof JsonBase) {
@@ -134,20 +139,29 @@ public class Transmogrifier {
             (f.getModifiers() & Modifier.NATIVE) != 0) {
           continue;
         }
-        rv.add(f.getName(), mapObjectUnsafe(f.get(o)));
+        JsonValue v = mapObjectUnsafe(f.get(o));
+        if(v != null) {
+          rv.add(f.getName(), v);          
+        }
       }
       return rv;
     } else if(List.class.isAssignableFrom(o.getClass())) {
       JsonArray rv = new JsonArray();
       for(Object e: List.class.cast(o)) {
-        rv.add(mapObjectUnsafe(e));
+        JsonValue v = mapObjectUnsafe(e);
+        if(v != null) {
+          rv.add(v);
+        }
       }
       return rv;
     } else if(Map.class.isAssignableFrom(o.getClass())) {
       JsonObject rv = new JsonObject();
       Map m = Map.class.cast(o);
       for(Object k: m.keySet()) {
-        rv.add((String)k, mapObjectUnsafe(m.get(k)));
+        JsonValue v = mapObjectUnsafe(m.get(k));
+        if(v != null) {
+          rv.add((String)k, v);
+        }
       }
       return rv;
     } else {

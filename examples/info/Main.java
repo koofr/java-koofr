@@ -8,13 +8,18 @@ import net.koofr.api.auth.basic.HttpBasicAuthenticator;
 import net.koofr.api.auth.oauth2.OAuth2Authenticator;
 import net.koofr.api.http.Client;
 import net.koofr.api.http.impl.basic.BasicClient;
+import net.koofr.api.json.JsonException;
 import net.koofr.api.json.Transmogrifier;
 import net.koofr.api.rest.v2.Api;
 import net.koofr.api.rest.v2.data.ConnectionList;
 import net.koofr.api.rest.v2.data.Group;
+import net.koofr.api.rest.v2.data.Groups.GroupBranding;
+import net.koofr.api.rest.v2.data.Groups.GroupCommon;
+import net.koofr.api.rest.v2.data.Groups.GroupUser;
 import net.koofr.api.rest.v2.data.Permissions;
 import net.koofr.api.rest.v2.data.Self;
 import net.koofr.api.rest.v2.data.User;
+import net.koofr.api.rest.v2.data.Bookmarks.Bookmark;
 
 public class Main {
 
@@ -89,6 +94,7 @@ public class Main {
     Api api = new Api("https://stage.koofr.net/api/v2", a, c);
     Self self = api.user().get();
     Transmogrifier.dumpObject(self); System.out.println();
+    /*
     ConnectionList cl = api.user().connections().get();
     Transmogrifier.dumpObject(cl); System.out.println();
     String oldF = self.firstName;
@@ -106,5 +112,40 @@ public class Main {
     Transmogrifier.dumpObject(api.user().settings().security().get()); System.out.println();
     Transmogrifier.dumpObject(api.user().settings().seen().get()); System.out.println();
     Transmogrifier.dumpObject(api.user().settings().language().get()); System.out.println();
+    Transmogrifier.dumpObject(api.user().bookmarks().get()); System.out.println();
+    Bookmark b = new Bookmark();
+    b.mountId = "686d1449-bd30-4a2a-a255-0579c9b9c605";
+    b.path = "/docz/";
+    b.name = "DOCZ";
+    api.user().bookmarks().create(b);
+    Transmogrifier.dumpObject(api.user().bookmarks().get()); System.out.println();
+    api.user().bookmarks().delete("686d1449-bd30-4a2a-a255-0579c9b9c605", "/docz/");
+    Transmogrifier.dumpObject(api.user().bookmarks().get()); System.out.println();
+    Transmogrifier.dumpObject(api.groups().get()); System.out.println();
+    System.out.println();
+    Permissions permissions = new Permissions();
+    permissions.put(Permissions.P.READ.name(), true);
+    permissions.put(Permissions.P.WRITE.name(), true);
+    GroupUser gu = api.groups().group("f287b54e-8da5-4215-8688-d7a6dfa8d733").users()
+        .add("monitor@koofr.net", permissions, 1024L);
+    Transmogrifier.dumpObject(gu); System.out.println();
+    System.out.println();
+    Transmogrifier.dumpObject(api.groups().group("f287b54e-8da5-4215-8688-d7a6dfa8d733").get()); System.out.println();
+    System.out.println();
+    api.groups().group("f287b54e-8da5-4215-8688-d7a6dfa8d733").users().user(gu.id).delete();
+    Transmogrifier.dumpObject(api.groups().group("f287b54e-8da5-4215-8688-d7a6dfa8d733").get()); System.out.println();
+    System.out.println();
+    */
+    Transmogrifier.dumpObject(api.groups().group("f287b54e-8da5-4215-8688-d7a6dfa8d733").get()); System.out.println();
+    System.out.println();
+    Transmogrifier.dumpObject(api.groups().group("f287b54e-8da5-4215-8688-d7a6dfa8d733").attributes().get()); System.out.println();
+    System.out.println();
+    GroupBranding b = new GroupBranding();
+    b.backgroundColor = "#abcdef";
+    b.foregroundColor = "#fedcba";
+    api.groups().group("f287b54e-8da5-4215-8688-d7a6dfa8d733").branding().edit(b);
+    api.groups().group("f287b54e-8da5-4215-8688-d7a6dfa8d733").common().edit(1024L);
+    Transmogrifier.dumpObject(api.groups().group("f287b54e-8da5-4215-8688-d7a6dfa8d733").get()); System.out.println();
+    System.out.println();
   }
 }

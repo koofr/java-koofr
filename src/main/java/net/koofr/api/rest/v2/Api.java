@@ -14,4 +14,8 @@ public class Api extends Resource {
     return new RUser(this);
   }
   
+  public RGroups groups() {
+    return new RGroups(this);
+  }
+  
 }

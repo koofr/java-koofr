@@ -11,9 +11,9 @@ public class RSettings extends Resource {
     super(user, "/settings");
   }
   
-  public class RNotifications extends Resource {
-    public RNotifications() {
-      super(RSettings.this, "/notifications");
+  public static class RNotifications extends Resource {
+    public RNotifications(RSettings parent) {
+      super(parent, "/notifications");
     }
     
     public Notifications get() throws JsonException, IOException {
@@ -26,12 +26,12 @@ public class RSettings extends Resource {
   }
 
   public RNotifications notifications() {
-    return new RNotifications();
+    return new RNotifications(this);
   }
   
-  public class RBranding extends Resource {
-    public RBranding() {
-      super(RSettings.this, "/branding");
+  public static class RBranding extends Resource {
+    public RBranding(RSettings parent) {
+      super(parent, "/branding");
     }
 
     public Branding get() throws JsonException, IOException {
@@ -44,12 +44,12 @@ public class RSettings extends Resource {
   }
   
   public RBranding branding() {
-    return new RBranding();
+    return new RBranding(this);
   }
 
-  public class RSecurity extends Resource {
-    public RSecurity() {
-      super(RSettings.this, "/security");
+  public static class RSecurity extends Resource {
+    public RSecurity(RSettings parent) {
+      super(parent, "/security");
     }
 
     public Security get() throws JsonException, IOException {
@@ -62,12 +62,12 @@ public class RSettings extends Resource {
   }
 
   public RSecurity security() {
-    return new RSecurity();
+    return new RSecurity(this);
   }
 
-  public class RSeen extends Resource {
-    public RSeen() {
-      super(RSettings.this, "/seen");
+  public static class RSeen extends Resource {
+    public RSeen(RSettings parent) {
+      super(parent, "/seen");
     }
     
     public Seen get() throws JsonException, IOException {
@@ -80,12 +80,12 @@ public class RSettings extends Resource {
   }
 
   public RSeen seen() {
-    return new RSeen();
+    return new RSeen(this);
   }
 
   public class RLanguage extends Resource {
-    public RLanguage() {
-      super(RSettings.this, "/seen");
+    public RLanguage(RSettings parent) {
+      super(parent, "/seen");
     }
     
     public Language get() throws JsonException, IOException {
@@ -98,7 +98,7 @@ public class RSettings extends Resource {
   }
 
   public RLanguage language() {
-    return new RLanguage();
+    return new RLanguage(this);
   }
     
 }
