@@ -18,4 +18,8 @@ public class Api extends Resource {
     return new RGroups(this);
   }
   
+  public RDevices devices() {
+    return new RDevices(this);
+  }
+  
 }

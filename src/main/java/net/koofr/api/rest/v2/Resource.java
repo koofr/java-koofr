@@ -21,7 +21,7 @@ import net.koofr.api.json.Transmogrifier;
 import net.koofr.api.util.Log;
 import net.koofr.api.util.StdLog;
 
-public abstract class Resource {
+public class Resource {
 
   Authenticator auth;
   Client httpClient;
@@ -121,6 +121,10 @@ public abstract class Resource {
   
   protected void deleteNoResult(String... params) throws IOException {
     resolveNoResult(httpDelete(params));
+  }
+
+  protected <T> T putJsonResult(Object body, Class<T> c) throws JsonException, IOException {
+    return resolveJsonResult(httpPut(new JsonBody(Transmogrifier.mapObject(body))), c);
   }
   
   protected void putJsonNoResult(Object body) throws JsonException, IOException {
