@@ -14,6 +14,8 @@ import net.koofr.api.rest.v2.Api;
 import net.koofr.api.rest.v2.data.ConnectionList;
 import net.koofr.api.rest.v2.data.Groups.*;
 import net.koofr.api.rest.v2.data.Devices.*;
+import net.koofr.api.rest.v2.data.Mounts.*;
+import net.koofr.api.rest.v2.data.Mounts;
 import net.koofr.api.rest.v2.data.Permissions;
 import net.koofr.api.rest.v2.data.Self;
 import net.koofr.api.rest.v2.data.User;
@@ -106,6 +108,49 @@ public class Main {
     System.out.println();
     api.devices().device(d.id).delete();    
     Transmogrifier.dumpObject(api.devices().device(d.id).get()); System.out.println();
+    Mounts mounts = api.mounts().get();
+    Transmogrifier.dumpObject(mounts); System.out.println();
+    System.out.println();
+    String mid = null;
+    for(Mount m: mounts.mounts) {
+      if(m.isPrimary) {
+        mid = m.id;
+        break;
+      }
+    }
+    if(mid != null) {
+      Transmogrifier.dumpObject(api.mounts().mount(mid).get()); System.out.println();
+      System.out.println();
+      api.mounts().mount(mid).edit("New name");
+      Transmogrifier.dumpObject(api.mounts().mount(mid).get()); System.out.println();
+      System.out.println();
+      Mount sm = api.mounts().mount(mid).createSubmount("Test submount", "/Test");
+      Mount sm = null;
+      for(Mount m: mounts.mounts) {
+        if(m.name.equals("Test submount")) {
+          sm = m;
+          break;
+        }
+      }
+      Transmogrifier.dumpObject(sm); System.out.println();
+      System.out.println();
+      Transmogrifier.dumpObject(api.mounts().get()); System.out.println();
+      System.out.println();
+      MountUser mu = api.mounts().mount(sm.id).users().add(null, "monitor@koofr.net", new Permissions());
+      Transmogrifier.dumpObject(mu); System.out.println();
+      System.out.println();
+      Permissions p = new Permissions();
+      p.put(Permissions.P.WRITE.toString(), true);
+      api.mounts().mount(sm.id).users().user(mu.id).edit(p);
+      Transmogrifier.dumpObject(api.mounts().mount(sm.id).get()); System.out.println();
+      System.out.println();
+      api.mounts().mount(sm.id).users().user(mu.id).delete();
+      Transmogrifier.dumpObject(api.mounts().mount(sm.id).get()); System.out.println();
+      System.out.println();
+      api.mounts().mount(sm.id).delete();
+      Transmogrifier.dumpObject(api.mounts().get()); System.out.println();
+      System.out.println();
+    }
     */
   }
 }

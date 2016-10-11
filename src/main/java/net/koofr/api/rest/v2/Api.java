@@ -22,4 +22,20 @@ public class Api extends Resource {
     return new RDevices(this);
   }
   
+  public RMounts mounts() {
+    return new RMounts(this);
+  }
+  
+  public RJobs jobs() {
+    return new RJobs(this);
+  }
+  
+  public RSearch search() {
+    return new RSearch(this);
+  }
+  
+  public RTrash trash() {
+    return new RTrash(this);
+  }
+
 }

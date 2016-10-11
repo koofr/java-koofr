@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import net.koofr.api.json.JsonBase;
 import net.koofr.api.json.JsonException;
+import net.koofr.api.rest.v2.data.Bundle;
 import net.koofr.api.rest.v2.data.Mounts;
 import net.koofr.api.rest.v2.data.Permissions;
 import net.koofr.api.rest.v2.data.Mounts.*;
@@ -57,7 +58,7 @@ public class RMounts extends Resource {
 
       return new Resource(this, "/submounts").postJsonResult(c, Mount.class);
     }
-    
+
     public RMountUsers users() {
       return new RMountUsers(this);
     }
@@ -66,6 +67,26 @@ public class RMounts extends Resource {
       return new RMountGroup(this, id);
     }
   
+    public Bundle bundle(String path) throws IOException, JsonException {
+      return new RBundle(this).get(path);
+    }
+    
+    public RFiles files() {
+      return new RFiles(this);
+    }
+    
+    public RComments comments() {
+      return new RComments(this);
+    }
+    
+    public RLinks links() {
+      return new RLinks(this);
+    }
+    
+    public RReceivers receivers() {
+      return new RReceivers(this);
+    }
+    
   }
   
   public static class RMountUsers extends Resource {
@@ -74,9 +95,9 @@ public class RMounts extends Resource {
     }
     
     public static class MountUserAdd implements JsonBase {
-      String id;
-      String email;
-      Permissions permissions;
+      public String id;
+      public String email;
+      public Permissions permissions;
     }
     
     public MountUser add(String id, String email, Permissions permissions) throws JsonException, IOException {
@@ -86,6 +107,10 @@ public class RMounts extends Resource {
       a.permissions = permissions;
       return postJsonResult(a, MountUser.class);
     }
+    
+    public RMountUser user(String id) {
+      return new RMountUser(this, id);
+    }
   }
 
   public static class RMountUser extends Resource {
@@ -94,7 +119,7 @@ public class RMounts extends Resource {
     }
     
     public static class MountUserEdit implements JsonBase {
-      Permissions permissions;
+      public Permissions permissions;
     }
     
     public void edit(Permissions permissions) throws JsonException, IOException {
@@ -114,7 +139,7 @@ public class RMounts extends Resource {
     }
 
     public static class MountGroupEdit implements JsonBase {
-      Permissions permissions;
+      public Permissions permissions;
     }
     
     public void add(Permissions permissions) throws JsonException, IOException {
@@ -128,4 +153,14 @@ public class RMounts extends Resource {
     }  
   }
 
+  private static class RBundle extends Resource {
+    public RBundle(RMount parent) {
+      super(parent, "/bundle");
+    }
+    
+    public Bundle get(String path) throws JsonException, IOException {
+      return getResult(Bundle.class, "path", path);
+    }
+  }
+  
 }

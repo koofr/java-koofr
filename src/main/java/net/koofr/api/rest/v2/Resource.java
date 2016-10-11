@@ -28,7 +28,7 @@ public class Resource {
   String url;
 
   Log log = new StdLog();
-  boolean debugContent = true;
+  boolean debugContent = false;
 
   public Resource(Authenticator auth, Client httpClient) {
     this.auth = auth;
@@ -86,7 +86,7 @@ public class Resource {
     }
     return b.toString();
   }
-  
+
   protected Response httpGet(String... params) throws IOException {
     return httpArmAndExecute(httpClient.get(urlWithParameters(params)), null);
   }
@@ -100,7 +100,7 @@ public class Resource {
   }  
     
   protected Response httpPost(String... params) throws IOException {
-    return httpArmAndExecute(httpClient.post(url), null);
+    return httpArmAndExecute(httpClient.post(urlWithParameters(url)), null);
   }
 
   protected Response httpPost(Body body, String... params) throws IOException {
@@ -111,6 +111,10 @@ public class Resource {
     return httpArmAndExecute(httpClient.delete(urlWithParameters(params)), null);
   }
   
+  protected <T> T getResult(Class<T> c, String... params) throws JsonException, IOException {
+    return resolveJsonResult(httpGet(params), c);
+  }
+
   protected <T> T getResult(Class<T> c) throws JsonException, IOException {
     return resolveJsonResult(httpGet(), c);
   }
@@ -123,20 +127,20 @@ public class Resource {
     resolveNoResult(httpDelete(params));
   }
 
-  protected <T> T putJsonResult(Object body, Class<T> c) throws JsonException, IOException {
-    return resolveJsonResult(httpPut(new JsonBody(Transmogrifier.mapObject(body))), c);
+  protected <T> T putJsonResult(Object body, Class<T> c, String... params) throws JsonException, IOException {
+    return resolveJsonResult(httpPut(new JsonBody(Transmogrifier.mapObject(body)), params), c);
   }
   
-  protected void putJsonNoResult(Object body) throws JsonException, IOException {
-    resolveNoResult(httpPut(new JsonBody(Transmogrifier.mapObject(body))));
+  protected void putJsonNoResult(Object body, String... params) throws JsonException, IOException {
+    resolveNoResult(httpPut(new JsonBody(Transmogrifier.mapObject(body)), params));
   }
 
-  protected <T> T postJsonResult(Object body, Class<T> c) throws JsonException, IOException {
-    return resolveJsonResult(httpPost(new JsonBody(Transmogrifier.mapObject(body))), c);
+  protected <T> T postJsonResult(Object body, Class<T> c, String... params) throws JsonException, IOException {
+    return resolveJsonResult(httpPost(new JsonBody(Transmogrifier.mapObject(body)), params), c);
   }
   
-  protected void postJsonNoResult(Object body) throws JsonException, IOException {
-    resolveNoResult(httpPost(new JsonBody(Transmogrifier.mapObject(body))));
+  protected void postJsonNoResult(Object body, String... params) throws JsonException, IOException {
+    resolveNoResult(httpPost(new JsonBody(Transmogrifier.mapObject(body)), params));
   }
     
   protected void resolveNoResult(Response r) throws IOException {

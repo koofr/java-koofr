@@ -1,6 +1,7 @@
 package net.koofr.api.rest.v2.data;
 
 import java.util.List;
+import java.util.Map;
 
 import net.koofr.api.json.JsonBase;
 
