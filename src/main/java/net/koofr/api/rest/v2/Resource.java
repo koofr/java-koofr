@@ -14,6 +14,7 @@ import net.koofr.api.http.Body;
 import net.koofr.api.http.Client;
 import net.koofr.api.http.HttpException;
 import net.koofr.api.http.Request;
+import net.koofr.api.http.Request.TransferCallback;
 import net.koofr.api.http.Response;
 import net.koofr.api.http.content.JsonBody;
 import net.koofr.api.json.JsonException;
@@ -30,11 +31,12 @@ public class Resource {
   Log log = new StdLog();
   boolean debugContent = false;
 
-  public Resource(Authenticator auth, Client httpClient) {
+  public Resource(Authenticator auth, Client httpClient, String url) {
     this.auth = auth;
     this.httpClient = httpClient;
+    this.url = url;
   }
-  
+
   public Resource(Resource r) {
     this.auth = r.auth;
     this.httpClient = r.httpClient;
@@ -46,7 +48,7 @@ public class Resource {
     this.url = r.url + morePath;
   }
   
-  protected Response httpArmAndExecute(Request r, Body body) throws IOException {
+  protected Response httpArmAndExecute(Request r, Body body, TransferCallback cb) throws IOException {
     if(auth != null) {
       auth.arm(r);
     }  
@@ -55,8 +57,8 @@ public class Resource {
         if(body instanceof JsonBody) {
           log.debug(body.toString());
         }
-      }
-      return r.execute(body);
+      }      
+      return r.execute(body, cb);
     } else {
       return r.execute();
     }
@@ -88,27 +90,31 @@ public class Resource {
   }
 
   protected Response httpGet(String... params) throws IOException {
-    return httpArmAndExecute(httpClient.get(urlWithParameters(params)), null);
+    return httpArmAndExecute(httpClient.get(urlWithParameters(params)), null, null);
   }
   
   protected Response httpPut(String... params) throws IOException {
-    return httpArmAndExecute(httpClient.put(urlWithParameters(params)), null);
+    return httpArmAndExecute(httpClient.put(urlWithParameters(params)), null, null);
   }
 
   protected Response httpPut(Body body, String... params) throws IOException {
-    return httpArmAndExecute(httpClient.put(urlWithParameters(params)), body);    
+    return httpArmAndExecute(httpClient.put(urlWithParameters(params)), body, null);    
   }  
     
   protected Response httpPost(String... params) throws IOException {
-    return httpArmAndExecute(httpClient.post(urlWithParameters(url)), null);
+    return httpArmAndExecute(httpClient.post(urlWithParameters(url)), null, null);
   }
 
   protected Response httpPost(Body body, String... params) throws IOException {
-    return httpArmAndExecute(httpClient.post(urlWithParameters(params)), body);
+    return httpArmAndExecute(httpClient.post(urlWithParameters(params)), body, null);
   }
 
+  protected Response httpPost(Body body, TransferCallback cb, String... params) throws IOException {
+    return httpArmAndExecute(httpClient.post(url), body, cb);
+  }
+  
   protected Response httpDelete(String... params) throws IOException {
-    return httpArmAndExecute(httpClient.delete(urlWithParameters(params)), null);
+    return httpArmAndExecute(httpClient.delete(urlWithParameters(params)), null, null);
   }
   
   protected <T> T getResult(Class<T> c, String... params) throws JsonException, IOException {

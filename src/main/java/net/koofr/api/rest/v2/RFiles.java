@@ -1,9 +1,13 @@
 package net.koofr.api.rest.v2;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
+import net.koofr.api.http.Request.TransferCallback;
+import net.koofr.api.http.Response;
+import net.koofr.api.http.content.MultipartBody;
 import net.koofr.api.json.JsonBase;
 import net.koofr.api.json.JsonException;
 import net.koofr.api.rest.v2.RMounts.RMount;
@@ -203,6 +207,52 @@ public class RFiles extends Resource {
     public void remove(String path, Map<String, List<String>> tags) throws IOException, JsonException {
       new RTagsAction(this, "/remove").execute(path, tags);
     }
+  }
+  
+  public static class FilesLink implements JsonBase {
+    public String link;
+  }
+  
+  private static class RFilesLink extends Resource {
+    public RFilesLink(RFiles parent, String path) {
+      super(parent, path);
+    }
+    
+    public String get(String path) throws IOException, JsonException {
+      return getResult(FilesLink.class, "path", path).link;
+    }
+  }
+  
+  public String getDownloadUrl(String path) throws IOException, JsonException {
+    return new RFilesLink(this, "/get").get(path);
+  }
+  
+  public String getUploadUrl(String path) throws IOException, JsonException {
+    return new RFilesLink(this, "/upload").get(path);
+  }
+  
+  private static class RFilesContent extends Resource {
+    public RFilesContent(RFiles parent, String path) {
+      super(parent, path);
+      url = url.replaceFirst("/api/v2/mounts", "/content/api/v2/mounts");      
+    }
+    
+    public Response get(String path /* TODO: other params */) throws IOException {
+      return httpGet();
+    }
+    
+    public void put(String path, String name, String contentType, Long contentSize, InputStream content, TransferCallback cb /* TODO: other params */) throws IOException {
+      MultipartBody body = new MultipartBody(name, contentType, contentSize, content);
+      resolveNoResult(httpPost(body, cb));
+    }
+  }
+  
+  public Response download(String path) throws IOException {
+    return new RFilesContent(this, "/get").get(path);
+  }
+  
+  public void upload(String path, String name, String contentType, Long contentSize, InputStream content, TransferCallback cb) throws IOException {
+    new RFilesContent(this, "/put").put(path,  name, contentType, contentSize, content, cb);
   }
   
   /* TODO: template creation, link local, discover local */

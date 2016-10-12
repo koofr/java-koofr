@@ -6,8 +6,7 @@ import net.koofr.api.http.Client;
 public class Api extends Resource {
   
   public Api(String baseUrl, Authenticator auth, Client client) {
-    super(auth, client);
-    url = baseUrl; /* i.e. https://stage.koofr.net/api/v2 */
+    super(auth, client, baseUrl);
   }
   
   public RUser user() {

@@ -37,6 +37,11 @@ public class BasicRequest implements Request {
 
   @Override
   public Response execute(Body body) throws IOException {
+    return execute(body, null);
+  }
+  
+  @Override
+  public Response execute(Body body, TransferCallback cb) throws IOException {
     String contentType = body.getContentType();
     Long contentLength = body.getContentLength();
     if(contentType != null) {
@@ -49,9 +54,14 @@ public class BasicRequest implements Request {
     InputStream i = body.getInputStream();
     byte b[] = new byte[BUFFER_SIZE];
     int n = 0;
+    long transferred = 0;
     while((n = i.read(b)) >= 0) {
       if(n > 0) {
         o.write(b, 0, n);
+        if(cb != null) {
+          transferred += n;
+          cb.progress(transferred, contentLength);
+        }
       }
     }
     return new BasicResponse(cnx);

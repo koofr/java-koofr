@@ -17,12 +17,18 @@ public class MultipartBody implements Body {
   String partFileName;
   String partContentType;
   InputStream partInputStream;
+  Long partSize;
   
-  public MultipartBody(String filename, String contentType, InputStream content) {
+  public MultipartBody(String filename, String contentType, Long size, InputStream content) {
     boundary = "===" + UUID.randomUUID().toString() + "===";
     partFileName = filename;
     partContentType = contentType;
     partInputStream = content;
+    partSize = size;
+  }
+  
+  public MultipartBody(String filename, String contentType, InputStream content) {
+    this(filename, contentType, null, content);
   }
   
   @Override
