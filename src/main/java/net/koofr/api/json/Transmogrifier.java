@@ -276,9 +276,6 @@ public class Transmogrifier {
       if(!src.isArray()) {
         throw new JsonException("Value not an array.");
       }
-      if(pc == null) {
-        throw new JsonException("Type parameter class not passed in.");
-      }
       JsonArray arr = src.asArray();
       int size = arr.size();
       T rv;
@@ -289,7 +286,11 @@ public class Transmogrifier {
         rv = cns.newInstance();        
       }
       for(int i = 0; i < size; i++) {
-        ((List)rv).add(mappedJsonResponseUnsafe(arr.get(i), pc, null));
+        if(pc != null) {
+          ((List)rv).add(mappedJsonResponseUnsafe(arr.get(i), pc, null));
+        } else {
+          ((List)rv).add(genericJsonResponse(arr.get(i)));
+        }
       }
       return rv;
     } else if(Map.class.isAssignableFrom(c)) {
@@ -335,12 +336,12 @@ public class Transmogrifier {
         if(!jsonHasField(obj, name)) {
           f.set(rv, null);
         } else {
-          if(typ.equals(List.class)) {
+          if(typ.equals(List.class)) {            
             f.set(rv, mappedJsonResponseUnsafe(obj.get(name), typ,
                 (Class)((ParameterizedType)f.getGenericType()).getActualTypeArguments()[0]));
           } else if(typ.equals(Map.class)) {
             f.set(rv, mappedJsonResponseUnsafe(obj.get(name), typ,
-                (Class)((ParameterizedType)f.getGenericType()).getActualTypeArguments()[1]));
+                (Class)(((ParameterizedType)f.getGenericType()).getActualTypeArguments()[1])));
           } else {
             f.set(rv, mappedJsonResponseUnsafe(obj.get(name), typ, null));
           }
@@ -351,5 +352,5 @@ public class Transmogrifier {
       throw new JsonException("Unsupported type: " + c.getSimpleName());
     }
   }
-
+  
 }

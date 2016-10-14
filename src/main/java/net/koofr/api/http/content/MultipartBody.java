@@ -16,18 +16,43 @@ public class MultipartBody implements Body {
   final String boundary;
   String partFileName;
   String partContentType;
-  InputStream partInputStream;
+  InputStream partInputStream, multipartStream;
   Long partSize;
+  Long contentLength;
   
-  public MultipartBody(String filename, String contentType, Long size, InputStream content) {
-    boundary = "===" + UUID.randomUUID().toString() + "===";
+  public MultipartBody(String filename, String contentType, Long size, InputStream content) throws IOException {
+    boundary = "JavaKoofrApi3-" + UUID.randomUUID().toString();
     partFileName = filename;
     partContentType = contentType;
     partInputStream = content;
     partSize = size;
+    
+    Vector<InputStream> iss = new Vector<>();
+    long overhead;
+    byte[] bytes = new StringBuilder("--").append(boundary).append(LF)
+      .append("Content-Disposition: form-data; name=\"file\"; filename=\"")
+      .append(partFileName).append("\"").append(LF)
+      .append("Content-Type: ").append(partContentType).append(LF)
+      .append(LF)
+      .toString().getBytes("UTF-8");
+    overhead = bytes.length;
+    iss.add(new ByteArrayInputStream(bytes));
+    iss.add(partInputStream);
+    bytes = new StringBuilder(LF)
+      .append("--").append(boundary).append("--").append(LF)
+      .toString().getBytes("UTF-8");
+    iss.add(new ByteArrayInputStream(bytes));
+    overhead += bytes.length;
+    multipartStream = new SequenceInputStream(iss.elements());
+    
+    if(partSize != null) {
+      contentLength = overhead + partSize;
+    } else {
+      contentLength = null;
+    }
   }
   
-  public MultipartBody(String filename, String contentType, InputStream content) {
+  public MultipartBody(String filename, String contentType, InputStream content) throws IOException {
     this(filename, contentType, null, content);
   }
   
@@ -38,25 +63,12 @@ public class MultipartBody implements Body {
   
   @Override
   public Long getContentLength() {
-    return null;
+    return contentLength;
   }
   
   @Override
   public InputStream getInputStream() throws IOException {
-    Vector<InputStream> iss = new Vector<>();
-    StringBuilder b = new StringBuilder("--").append(boundary).append(LF)
-      .append("Content-Disposition: form-data; name=\"file\"; filename=\"")
-      .append(partFileName).append("\"").append(LF)
-      .append("Content-Type: ").append(partContentType).append(LF)
-      .append("Content-Transfer-Encoding: binary").append(LF)
-      .append(LF);
-    iss.add(new ByteArrayInputStream(b.toString().getBytes("UTF-8")));
-    iss.add(partInputStream);
-    b = new StringBuilder(LF)
-      .append(LF)
-      .append("--").append(boundary).append("--").append(LF);
-      iss.add(new ByteArrayInputStream(b.toString().getBytes("UTF-8")));
-    return new SequenceInputStream(iss.elements());
+    return multipartStream;
   }
   
 }

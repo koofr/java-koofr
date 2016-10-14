@@ -9,8 +9,8 @@ public class Api extends Resource {
     super(auth, client, baseUrl);
   }
   
-  public RUser user() {
-    return new RUser(this);
+  public RSelf self() {
+    return new RSelf(this);
   }
   
   public RGroups groups() {
@@ -37,4 +37,8 @@ public class Api extends Resource {
     return new RTrash(this);
   }
 
+  public RUsers users() {
+    return new RUsers(this);
+  }
+  
 }

@@ -2,12 +2,13 @@ package net.koofr.api.rest.v2;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import net.koofr.api.http.Request.TransferCallback;
 import net.koofr.api.http.Response;
 import net.koofr.api.http.content.MultipartBody;
+import net.koofr.api.http.errors.HttpException;
 import net.koofr.api.json.JsonBase;
 import net.koofr.api.json.JsonException;
 import net.koofr.api.rest.v2.RMounts.RMount;
@@ -120,13 +121,31 @@ public class RFiles extends Resource {
       super(parent, "/remove");
     }
     
-    public void delete(String path) throws IOException, JsonException  {
-      deleteNoResult("path", path);
+    public void delete(String path, DeleteOptions options) throws IOException, JsonException  {
+      ArrayList<String> params = new ArrayList<>();
+      params.add("path"); params.add(path);
+      if(options != null) {
+        if(options.size != null) {        
+          params.add("removeIfSize"); params.add(options.size.toString());
+        }
+        if(options.modified != null) {
+          params.add("removeIfModified"); params.add(options.modified.toString());
+        }
+        if(options.hash != null) {
+          params.add("removeIfHash"); params.add(options.hash);
+        }
+        if(options.ifEmpty != null) {
+          params.add("removeIfEmpty"); params.add(options.ifEmpty.toString());        
+        }
+      }
+      String[] p = new String[params.size()];
+      params.toArray(p);
+      deleteNoResult(p);
     }
   }
   
-  public void delete(String path) throws IOException, JsonException {
-    new RFilesRemove(this).delete(path);
+  public void delete(String path, DeleteOptions options) throws IOException, JsonException {
+    new RFilesRemove(this).delete(path, options);
   }
   
   public static class FilesRename implements JsonBase {
@@ -209,6 +228,10 @@ public class RFiles extends Resource {
     }
   }
   
+  public RTags tags() {
+    return new RTags(this);
+  }
+  
   public static class FilesLink implements JsonBase {
     public String link;
   }
@@ -224,7 +247,7 @@ public class RFiles extends Resource {
   }
   
   public String getDownloadUrl(String path) throws IOException, JsonException {
-    return new RFilesLink(this, "/get").get(path);
+    return new RFilesLink(this, "/download").get(path);
   }
   
   public String getUploadUrl(String path) throws IOException, JsonException {
@@ -233,26 +256,51 @@ public class RFiles extends Resource {
   
   private static class RFilesContent extends Resource {
     public RFilesContent(RFiles parent, String path) {
-      super(parent, path);
-      url = url.replaceFirst("/api/v2/mounts", "/content/api/v2/mounts");      
+      super(parent, path);      
+      url = contentUrl(url);      
     }
     
-    public Response get(String path /* TODO: other params */) throws IOException {
-      return httpGet();
+    public Response get(String path) throws IOException {
+      return httpGet("path", path);
     }
     
-    public void put(String path, String name, String contentType, Long contentSize, InputStream content, TransferCallback cb /* TODO: other params */) throws IOException {
+    public UploadResult put(String path, String name, String contentType, Long contentSize, InputStream content, UploadOptions options) throws IOException, JsonException {
       MultipartBody body = new MultipartBody(name, contentType, contentSize, content);
-      resolveNoResult(httpPost(body, cb));
+      ArrayList<String> params = new ArrayList<>();
+      params.add("path"); params.add(path);
+      if(options != null) {
+        if(options.size != null) {        
+          params.add("overwriteIfSize"); params.add(options.size.toString());
+        }
+        if(options.modified != null) {
+          params.add("overwriteIfModified"); params.add(options.modified.toString());
+        }
+        if(options.hash != null) {
+          params.add("overwriteIfHash"); params.add(options.hash);
+        }
+        if(options.ignoreNonExisting != null) {
+          params.add("overwriteIgnoreNonexisting"); params.add(options.ignoreNonExisting.toString());        
+        }
+        if(options.noRename != null) {
+          params.add("autorename"); params.add(options.noRename.toString());        
+        }
+        if(options.forceOverwrite != null) {
+          params.add("overwrite"); params.add(options.forceOverwrite.toString());        
+        }
+      }
+      String[] p = new String[params.size()];
+      params.toArray(p);      
+      return resolveJsonResult(httpPost(body, options.callback, p), UploadResult.class);
     }
   }
   
-  public Response download(String path) throws IOException {
-    return new RFilesContent(this, "/get").get(path);
+  public DownloadResult download(String path) throws IOException {
+    Response r = new RFilesContent(this, "/get").get(path);
+    return resolveDownload(r);
   }
   
-  public void upload(String path, String name, String contentType, Long contentSize, InputStream content, TransferCallback cb) throws IOException {
-    new RFilesContent(this, "/put").put(path,  name, contentType, contentSize, content, cb);
+  public UploadResult upload(String path, String name, String contentType, Long contentSize, InputStream content, UploadOptions options) throws IOException, JsonException {
+    return new RFilesContent(this, "/put").put(path, name, contentType, contentSize, content, options);
   }
   
   /* TODO: template creation, link local, discover local */

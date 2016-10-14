@@ -1,5 +1,16 @@
 package info;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -7,14 +18,20 @@ import net.koofr.api.auth.Authenticator;
 import net.koofr.api.auth.basic.HttpBasicAuthenticator;
 import net.koofr.api.auth.oauth2.OAuth2Authenticator;
 import net.koofr.api.http.Client;
+import net.koofr.api.http.Request;
+import net.koofr.api.http.Response;
+import net.koofr.api.http.errors.HttpException;
+import net.koofr.api.http.errors.HttpException.*;
 import net.koofr.api.http.impl.basic.BasicClient;
 import net.koofr.api.json.JsonException;
 import net.koofr.api.json.Transmogrifier;
 import net.koofr.api.rest.v2.Api;
+import net.koofr.api.rest.v2.RMounts.RMount;
 import net.koofr.api.rest.v2.data.ConnectionList;
 import net.koofr.api.rest.v2.data.Groups.*;
 import net.koofr.api.rest.v2.data.Devices.*;
 import net.koofr.api.rest.v2.data.Mounts.*;
+import net.koofr.api.rest.v2.data.Files.*;
 import net.koofr.api.rest.v2.data.Mounts;
 import net.koofr.api.rest.v2.data.Permissions;
 import net.koofr.api.rest.v2.data.Self;
@@ -23,51 +40,36 @@ import net.koofr.api.rest.v2.data.Bookmarks.Bookmark;
 
 public class Main {
 
-  public static void main(String[] args) throws Exception {
-    Client c = new BasicClient();
-    Authenticator a = null;
-    if(args.length == 4) {
-      a = new OAuth2Authenticator(c, args[0], args[1], args[2], "urn:ietf:wg:oauth:2.0:oob");
-      ((OAuth2Authenticator)a).setGrantCode(args[3]);
-      System.out.println("Refresh token: " + ((OAuth2Authenticator)a).getRefreshToken());
-      System.out.println("Access token: " + ((OAuth2Authenticator)a).getAccessToken());
-      System.out.println("Expiration: " + ((OAuth2Authenticator)a).getExpirationDate());
-    } else if(args.length == 2) {
-      a = new HttpBasicAuthenticator(args[0], args[1]);
-    } else {
-      System.err.println("Usage: info [<token-url> <client-id> <client-secret> <grant-code>|<username> <password>]");
-      System.exit(42);
-    }
-    Api api = new Api("https://stage.koofr.net/api/v2", a, c);
-    Self self = api.user().get();
+  private static void cover(Api api) throws IOException, JsonException {
+    Self self = api.self().get();
     Transmogrifier.dumpObject(self); System.out.println();
-    /*
-    ConnectionList cl = api.user().connections().get();
+
+    ConnectionList cl = api.self().connections().get();
     Transmogrifier.dumpObject(cl); System.out.println();
     String oldF = self.firstName;
     String oldL = self.lastName;
-    api.user().edit("bu", "ba");
-    self = api.user().get();
+    api.self().edit("bu", "ba");
+    self = api.self().get();
     Transmogrifier.dumpObject(self); System.out.println();
-    api.user().edit(oldF, oldL);
-    Map<String, Object> attributes = api.user().attributes().get();
+    api.self().edit(oldF, oldL);
+    Map<String, Object> attributes = api.self().attributes().get();
     Transmogrifier.dumpObject(attributes); System.out.println();
-    Map<String, Object> appConfig = api.user().appConfig().get();
+    Map<String, Object> appConfig = api.self().appConfig().get();
     Transmogrifier.dumpObject(appConfig); System.out.println();
-    Transmogrifier.dumpObject(api.user().settings().branding().get()); System.out.println();
-    Transmogrifier.dumpObject(api.user().settings().notifications().get()); System.out.println();
-    Transmogrifier.dumpObject(api.user().settings().security().get()); System.out.println();
-    Transmogrifier.dumpObject(api.user().settings().seen().get()); System.out.println();
-    Transmogrifier.dumpObject(api.user().settings().language().get()); System.out.println();
-    Transmogrifier.dumpObject(api.user().bookmarks().get()); System.out.println();
+    Transmogrifier.dumpObject(api.self().settings().branding().get()); System.out.println();
+    Transmogrifier.dumpObject(api.self().settings().notifications().get()); System.out.println();
+    Transmogrifier.dumpObject(api.self().settings().security().get()); System.out.println();
+    Transmogrifier.dumpObject(api.self().settings().seen().get()); System.out.println();
+    Transmogrifier.dumpObject(api.self().settings().language().get()); System.out.println();
+    Transmogrifier.dumpObject(api.self().bookmarks().get()); System.out.println();
     Bookmark b = new Bookmark();
     b.mountId = "686d1449-bd30-4a2a-a255-0579c9b9c605";
     b.path = "/docz/";
     b.name = "DOCZ";
-    api.user().bookmarks().create(b);
-    Transmogrifier.dumpObject(api.user().bookmarks().get()); System.out.println();
-    api.user().bookmarks().delete("686d1449-bd30-4a2a-a255-0579c9b9c605", "/docz/");
-    Transmogrifier.dumpObject(api.user().bookmarks().get()); System.out.println();
+    api.self().bookmarks().create(b);
+    Transmogrifier.dumpObject(api.self().bookmarks().get()); System.out.println();
+    api.self().bookmarks().delete("686d1449-bd30-4a2a-a255-0579c9b9c605", "/docz/");
+    Transmogrifier.dumpObject(api.self().bookmarks().get()); System.out.println();
     Transmogrifier.dumpObject(api.groups().get()); System.out.println();
     System.out.println();
     Permissions permissions = new Permissions();
@@ -106,8 +108,12 @@ public class Main {
     api.devices().device(d.id).edit("DB4");
     Transmogrifier.dumpObject(api.devices().device(d.id).get()); System.out.println();
     System.out.println();
-    api.devices().device(d.id).delete();    
-    Transmogrifier.dumpObject(api.devices().device(d.id).get()); System.out.println();
+    api.devices().device(d.id).delete();
+    try {
+      Transmogrifier.dumpObject(api.devices().device(d.id).get()); System.out.println();
+    } catch(NotFound ex) {      
+    }
+
     Mounts mounts = api.mounts().get();
     Transmogrifier.dumpObject(mounts); System.out.println();
     System.out.println();
@@ -124,13 +130,16 @@ public class Main {
       api.mounts().mount(mid).edit("New name");
       Transmogrifier.dumpObject(api.mounts().mount(mid).get()); System.out.println();
       System.out.println();
-      Mount sm = api.mounts().mount(mid).createSubmount("Test submount", "/Test");
-      Mount sm = null;
+      Mount sm;
+      sm = null;
       for(Mount m: mounts.mounts) {
         if(m.name.equals("Test submount")) {
           sm = m;
           break;
         }
+      }
+      if(sm == null) {
+        sm = api.mounts().mount(mid).createSubmount("Test submount", "/Test");
       }
       Transmogrifier.dumpObject(sm); System.out.println();
       System.out.println();
@@ -150,7 +159,97 @@ public class Main {
       api.mounts().mount(sm.id).delete();
       Transmogrifier.dumpObject(api.mounts().get()); System.out.println();
       System.out.println();
+
+      RMount rm = api.mounts().mount(mid);
+
+      Transmogrifier.dumpObject(rm.bundle("/Test")); System.out.println();
+      System.out.println();
+      Transmogrifier.dumpObject(rm.files().list("/Test")); System.out.println();
+      System.out.println();
+      Transmogrifier.dumpObject(rm.files().info("/Test")); System.out.println();
+      System.out.println();
+      Transmogrifier.dumpObject(rm.files().tree("/Test")); System.out.println();
+      System.out.println();
+      Transmogrifier.dumpObject(rm.files().versions().get("/Test")); System.out.println();
+      System.out.println();
+      rm.files().createFolder("/Test", "Folder");
+      rm.files().rename("/Test/Folder", "Folder2");
+      System.out.print(rm.files().getDownloadUrl("/Test/Folder2")); System.out.println();
+      System.out.println();
+      System.out.print(rm.files().getUploadUrl("/Test/Folder2")); System.out.println();
+      System.out.println();
+      rm.files().copy("/Test/Folder2", mid, "/Test/Folder3");
+      rm.files().move("/Test/Folder3", mid, "/Test/Folder4");
+      Map<String, List<String>> tags = new HashMap<>();
+      List<String> l = new ArrayList<>();
+      l.add("A"); l.add("B");
+      tags.put("Tag1", l);
+      l = new ArrayList<>();
+      l.add("C");
+      tags.put("Tag2", l);
+      rm.files().tags().add("/Test/Folder4", tags);
+      Transmogrifier.dumpObject(rm.files().info("/Test/Folder4")); System.out.println();
+      System.out.println();
+      rm.files().tags().remove("/Test/Folder4", tags);
+      Transmogrifier.dumpObject(rm.files().info("/Test/Folder4")); System.out.println();
+      System.out.println();
+
+      File fl = new File("./test.jpg");
+      InputStream is = new FileInputStream(fl);
+      UploadOptions uo = new UploadOptions();
+      uo.callback = new Request.TransferCallback() {
+        public void progress(Long c, Long t) {
+          System.out.print("\r    " + c + "/" + t + "               ");
+        }
+      };
+      
+      Transmogrifier.dumpObject(rm.files().upload("/Test/Folder2", "test.jpg", "image/jpeg", fl.length(), is, uo));
+      System.out.println();
+      is.close();
+      DownloadResult dl = rm.files().download("/Test/Folder2/test.jpg");
+      System.out.println("Content type: " + dl.contentType);
+      System.out.println("Content length: " + dl.contentLength);
+      Files.deleteIfExists(FileSystems.getDefault().getPath("dl.bin"));
+      Files.copy(dl.downloadStream, FileSystems.getDefault().getPath("dl.bin"));
+      dl.close();
+      byte[] b1 = Files.readAllBytes(FileSystems.getDefault().getPath("test.jpg"));
+      byte[] b2 = Files.readAllBytes(FileSystems.getDefault().getPath("dl.bin"));
+      System.out.println("Uploaded and downloaded equals original: " + Arrays.equals(b1,  b2));
+      rm.files().delete("/Test/Folder2/test.jpg", null);
+      
+      dl = api.self().profilePicture().get();
+      Files.deleteIfExists(FileSystems.getDefault().getPath("pp.bin"));
+      Files.copy(dl.downloadStream, FileSystems.getDefault().getPath("pp.bin"));
+      dl.close();
+      is = new FileInputStream("./test.jpg");
+      api.self().profilePicture().update(is, "picture.jpg", "image/jpeg");
+      
+      dl = api.users().user("a1ca8c20-e82c-4169-91b0-92980e1736f9").profilePicture().get();
+      Files.deleteIfExists(FileSystems.getDefault().getPath("pp2.bin"));
+      Files.copy(dl.downloadStream, FileSystems.getDefault().getPath("pp2.bin"));
+      dl.close();
+      
+      rm.files().delete("/Test/Folder2", null);
+      rm.files().delete("/Test/Folder4", null);
+      
+      /* TODO: test jobs */
     }
-    */
+  }
+  
+  public static void main(String[] args) throws Exception {
+    Client c = new BasicClient();
+    Authenticator a = null;
+    if(args.length == 4) {
+      a = new OAuth2Authenticator(c, args[0], args[1], args[2], "urn:ietf:wg:oauth:2.0:oob");
+      ((OAuth2Authenticator)a).setGrantCode(args[3]);
+    } else if(args.length == 2) {
+      a = new HttpBasicAuthenticator(args[0], args[1]);
+    } else {
+      System.err.println("Usage: info [<token-url> <client-id> <client-secret> <grant-code>|<username> <password>]");
+      System.exit(42);
+    }
+    Api api = new Api("https://stage.koofr.net/api/v2", a, c);
+    Self s = api.self().get();
+    System.out.println("You are " + s.firstName + " " + s.lastName + " at " + s.email);
   }
 }

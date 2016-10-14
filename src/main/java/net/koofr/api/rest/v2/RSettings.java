@@ -7,7 +7,7 @@ import net.koofr.api.rest.v2.data.Settings.*;
 
 public class RSettings extends Resource {
 
-  public RSettings(RUser user) {
+  public RSettings(RSelf user) {
     super(user, "/settings");
   }
   

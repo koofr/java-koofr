@@ -1,18 +1,21 @@
 package net.koofr.api.rest.v2;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 
+import net.koofr.api.http.content.MultipartBody;
 import net.koofr.api.json.JsonBase;
 import net.koofr.api.json.JsonException;
 import net.koofr.api.rest.v2.data.Bookmarks;
 import net.koofr.api.rest.v2.data.ConnectionList;
+import net.koofr.api.rest.v2.data.Files.DownloadResult;
 import net.koofr.api.rest.v2.data.Self;
 import net.koofr.api.rest.v2.data.Bookmarks.Bookmark;
 
-public class RUser extends Resource {
+public class RSelf extends Resource {
 
-  public RUser(Api r) {
+  public RSelf(Api r) {
     super(r, "/user");
   }
 
@@ -22,7 +25,7 @@ public class RUser extends Resource {
 
   public static class RConnections extends Resource {
 
-    public RConnections(RUser parent) {
+    public RConnections(RSelf parent) {
       super(parent, "/connections");
     }
 
@@ -56,7 +59,7 @@ public class RUser extends Resource {
   public class RPassword extends Resource {
     
     public RPassword() {
-      super(RUser.this, "/password");
+      super(RSelf.this, "/password");
     }
     
     public void change(String oldPassword, String newPassword) throws JsonException, IOException {
@@ -79,7 +82,7 @@ public class RUser extends Resource {
   public class REmail extends Resource {
     
     public REmail() {
-      super(RUser.this, "/changeemail");
+      super(RSelf.this, "/changeemail");
     }
     
     public void change(String newEmail) throws JsonException, IOException {
@@ -97,7 +100,7 @@ public class RUser extends Resource {
   public class RAttributes extends Resource {
     
     public RAttributes() {
-      super(RUser.this, "/attributes");
+      super(RSelf.this, "/attributes");
     }
     
     @SuppressWarnings("unchecked")
@@ -113,7 +116,7 @@ public class RUser extends Resource {
   public class RAppConfig extends Resource {
     
     public RAppConfig() {
-      super(RUser.this, "/appconfig");
+      super(RSelf.this, "/appconfig");
     }
     
     @SuppressWarnings("unchecked")
@@ -133,7 +136,7 @@ public class RUser extends Resource {
   public class RBookmarks extends Resource {
 
     public RBookmarks() {
-      super(RUser.this, "/bookmarks");
+      super(RSelf.this, "/bookmarks");
     }
 
     public Bookmarks get() throws JsonException, IOException {
@@ -161,12 +164,47 @@ public class RUser extends Resource {
   public class RActivity extends Resource {
     
     public RActivity() {
-      super(RUser.this, "/activity");
+      super(RSelf.this, "/activity");
     }
     
     public void get() {
       throw new RuntimeException("Not implemented.");
     }
+  }
+  
+  public RActivity activity() {
+    return new RActivity();
+  }
+  
+  public static class RProfilePicture extends Resource {
+    public RProfilePicture(RSelf parent) {
+      super(parent, "/profile-picture");
+      url = contentUrl(url);
+    }
+    
+    public DownloadResult get() throws IOException {
+      return resolveDownload(httpGet());
+    }
+    
+    public void update(InputStream content, String name, String contentType) throws IOException {
+      new Update(this).update(content, name, contentType);
+    }
+    
+    private static class Update extends Resource {
+      public Update(RProfilePicture parent) {
+        super(parent, "/update");
+      }
+      
+      public void update(InputStream content, String name, String contentType) throws IOException {
+        MultipartBody b = new MultipartBody(name, contentType, content);
+        resolveNoResult(httpPost(b));
+      }
+    }
+    
+  }
+  
+  public RProfilePicture profilePicture() {
+    return new RProfilePicture(this);
   }
   
 }

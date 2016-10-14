@@ -12,13 +12,14 @@ import java.util.Map;
 import net.koofr.api.auth.Authenticator;
 import net.koofr.api.http.Body;
 import net.koofr.api.http.Client;
-import net.koofr.api.http.HttpException;
 import net.koofr.api.http.Request;
 import net.koofr.api.http.Request.TransferCallback;
 import net.koofr.api.http.Response;
 import net.koofr.api.http.content.JsonBody;
+import net.koofr.api.http.errors.HttpException;
 import net.koofr.api.json.JsonException;
 import net.koofr.api.json.Transmogrifier;
+import net.koofr.api.rest.v2.data.Files.DownloadResult;
 import net.koofr.api.util.Log;
 import net.koofr.api.util.StdLog;
 
@@ -110,7 +111,7 @@ public class Resource {
   }
 
   protected Response httpPost(Body body, TransferCallback cb, String... params) throws IOException {
-    return httpArmAndExecute(httpClient.post(url), body, cb);
+    return httpArmAndExecute(httpClient.post(urlWithParameters(params)), body, cb);
   }
   
   protected Response httpDelete(String... params) throws IOException {
@@ -152,13 +153,9 @@ public class Resource {
   protected void resolveNoResult(Response r) throws IOException {
     if(debugContent) {
       logResponse(r, log);
-      if(r.getStatus()/100 != 2) {
-        throw new HttpException(r);
-      }      
+      HttpException.checkResponse(r);
     } else {
-      if(r.getStatus()/100 != 2) {
-        throw new HttpException(r);
-      }
+      HttpException.checkResponse(r);
     }
   }
   
@@ -167,7 +164,7 @@ public class Resource {
       if(debugContent) {
         logResponse(r, log);
       }
-      throw new HttpException(r);
+      HttpException.checkResponse(r);
     }
     String contentType = r.getHeader("Content-Type");
     Map<String, List<String>> headers = r.getHeaders();
@@ -190,6 +187,26 @@ public class Resource {
     }
   }
 
+  protected DownloadResult resolveDownload(Response r) throws IOException {
+    HttpException.checkResponse(r);
+    DownloadResult rv = new DownloadResult();
+    rv.contentType = r.getHeader("Content-Type");
+    rv.contentLength = null;
+    try {
+      String l = r.getHeader("Content-Length");
+      if(l != null) {
+        rv.contentLength = Long.parseLong(l);
+      }
+    } catch(NumberFormatException ex) {      
+    }
+    rv.downloadStream = r.getInputStream();
+    return rv;    
+  }
+  
+  protected String contentUrl(String u) {
+    return u.replaceFirst("/api/v2/", "/content/api/v2/");
+  }
+  
   protected String logResponse(Response r, Log l) {
     try {
       l.debug("Response status code: " + r.getStatus());

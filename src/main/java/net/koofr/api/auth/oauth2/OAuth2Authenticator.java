@@ -9,10 +9,10 @@ import com.eclipsesource.json.JsonObject;
 
 import net.koofr.api.auth.Authenticator;
 import net.koofr.api.http.Client;
-import net.koofr.api.http.HttpException;
 import net.koofr.api.http.Request;
 import net.koofr.api.http.Response;
 import net.koofr.api.http.content.UrlEncodedBody;
+import net.koofr.api.http.errors.HttpException;
 
 public class OAuth2Authenticator implements Authenticator {
 
@@ -33,9 +33,7 @@ public class OAuth2Authenticator implements Authenticator {
   }
   
   private void parseTokenResponse(Response rs) throws IOException {
-    if(rs.getStatus() != 200) {
-      throw new HttpException(rs, "Failed to fetch token with authorization code.");
-    }
+    HttpException.checkResponse(rs);
     JsonObject o = Json.parse(new InputStreamReader(rs.getInputStream(), "UTF-8")).asObject();
     try {
       String r = o.getString("refresh_token", null);
@@ -47,7 +45,7 @@ public class OAuth2Authenticator implements Authenticator {
         accessExpiration = new Date(new Date().getTime() + x*1000);
       }      
     } catch(Exception ex) {
-      throw new HttpException("Bad token response: " + o.toString(), ex);
+      throw new IOException("Bad token response: " + o.toString(), ex);
     }
   }
   
