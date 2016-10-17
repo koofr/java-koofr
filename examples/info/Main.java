@@ -269,16 +269,16 @@ public class Main {
   public static void main(String[] args) throws Exception {
     Client c = new BasicClient();
     Authenticator a = null;
-    if(args.length == 4) {
-      a = new OAuth2Authenticator(c, args[0], args[1], args[2], "urn:ietf:wg:oauth:2.0:oob");
-      ((OAuth2Authenticator)a).setGrantCode(args[3]);
-    } else if(args.length == 2) {
-      a = new HttpBasicAuthenticator(args[0], args[1]);
+    if(args.length == 5) {
+      a = new OAuth2Authenticator(c, args[1], args[2], args[3], "urn:ietf:wg:oauth:2.0:oob");
+      ((OAuth2Authenticator)a).setGrantCode(args[4]);
+    } else if(args.length == 3) {
+      a = new HttpBasicAuthenticator(args[1], args[2]);
     } else {
-      System.err.println("Usage: info [<token-url> <client-id> <client-secret> <grant-code>|<username> <password>]");
+      System.err.println("Usage: info <server> [<token-url> <client-id> <client-secret> <grant-code>|<username> <password>]");
       System.exit(42);
     }
-    Api api = new Api("https://stage.koofr.net/api/v2", a, c);
+    Api api = new Api("https://" + args[0] + "/api/v2", a, c);
     Self s = api.self().get();
     System.out.println("You are " + s.firstName + " " + s.lastName + " at " + s.email);
   }
