@@ -21,7 +21,6 @@ import net.koofr.api.json.JsonException;
 import net.koofr.api.json.Transmogrifier;
 import net.koofr.api.rest.v2.data.Files.DownloadResult;
 import net.koofr.api.util.Log;
-import net.koofr.api.util.StdLog;
 
 public class Resource {
 
