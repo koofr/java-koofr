@@ -122,7 +122,7 @@ public class RFiles extends Resource {
     }
     
     public void delete(String path, DeleteOptions options) throws IOException, JsonException  {
-      ArrayList<String> params = new ArrayList<>();
+      ArrayList<String> params = new ArrayList<String>();
       params.add("path"); params.add(path);
       if(options != null) {
         if(options.size != null) {        
@@ -266,7 +266,7 @@ public class RFiles extends Resource {
     
     public UploadResult put(String path, String name, String contentType, Long contentSize, InputStream content, UploadOptions options) throws IOException, JsonException {
       MultipartBody body = new MultipartBody(name, contentType, contentSize, content);
-      ArrayList<String> params = new ArrayList<>();
+      ArrayList<String> params = new ArrayList<String>();
       params.add("path"); params.add(path);
       if(options != null) {
         if(options.size != null) {        

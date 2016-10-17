@@ -27,7 +27,7 @@ public class MultipartBody implements Body {
     partInputStream = content;
     partSize = size;
     
-    Vector<InputStream> iss = new Vector<>();
+    Vector<InputStream> iss = new Vector<InputStream>();
     long overhead;
     byte[] bytes = new StringBuilder("--").append(boundary).append(LF)
       .append("Content-Disposition: form-data; name=\"file\"; filename=\"")

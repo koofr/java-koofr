@@ -18,6 +18,7 @@ import net.koofr.api.http.Client;
 import net.koofr.api.http.Request.TransferCallback;
 import net.koofr.api.http.impl.basic.BasicClient;
 import net.koofr.api.json.JsonException;
+import net.koofr.api.json.Transmogrifier;
 import net.koofr.api.rest.v2.Api;
 import net.koofr.api.rest.v2.RSearch.QueryParameters;
 import net.koofr.api.rest.v2.data.Files;
@@ -160,7 +161,7 @@ class Example implements Runnable {
     p.query = query;
     SearchResult result = api.search().query(p);
     for(SearchHit hit: result.hits) {
-      System.out.println(hit.mount.name + ":" + hit.path);
+      System.out.println(hit.mountId + ":" + hit.path);
     }
     System.out.println("\n");    
   }
@@ -218,6 +219,7 @@ class Example implements Runnable {
         }
       } catch (Exception e) {
         System.out.println("error:" + e);
+        e.printStackTrace(System.out);
       }
     }
   }

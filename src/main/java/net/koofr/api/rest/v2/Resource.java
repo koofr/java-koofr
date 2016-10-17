@@ -29,8 +29,9 @@ public class Resource {
   Client httpClient;
   String url;
 
-  Log log = new StdLog();
-  boolean debugContent = false;
+  private static Log log = null;
+  private static boolean shouldLogHttp() { return log != null; }
+  public static void setHttpLog(Log log) { Resource.log = log; }
 
   public Resource(Authenticator auth, Client httpClient, String url) {
     this.auth = auth;
@@ -54,9 +55,9 @@ public class Resource {
       auth.arm(r);
     }  
     if(body != null) {
-      if(debugContent) {
+      if(Resource.shouldLogHttp()) {
         if(body instanceof JsonBody) {
-          log.debug(body.toString());
+          Resource.log.debug(body.toString());
         }
       }      
       return r.execute(body, cb);
@@ -151,8 +152,8 @@ public class Resource {
   }
     
   protected void resolveNoResult(Response r) throws IOException {
-    if(debugContent) {
-      logResponse(r, log);
+    if(Resource.shouldLogHttp()) {
+      Resource.logResponse(r);
       HttpException.checkResponse(r);
     } else {
       HttpException.checkResponse(r);
@@ -161,14 +162,14 @@ public class Resource {
   
   protected <T> T resolveJsonResult(Response r, Class<T> c) throws JsonException, IOException {
     if(r.getStatus()/100 != 2) {
-      if(debugContent) {
-        logResponse(r, log);
+      if(Resource.shouldLogHttp()) {
+        Resource.logResponse(r);
       }
       HttpException.checkResponse(r);
     }
     String contentType = r.getHeader("Content-Type");
     Map<String, List<String>> headers = r.getHeaders();
-    if(debugContent) {
+    if(Resource.shouldLogHttp()) {
       for(String h: headers.keySet()) {
         log.debug("Header: " + h);
         for(String v: headers.get(h)) {
@@ -179,8 +180,8 @@ public class Resource {
     if(contentType == null || !contentType.startsWith("application/json")) {
       throw new BadContentTypeException();
     }
-    if(debugContent) {
-      String body = logResponse(r, log);
+    if(Resource.shouldLogHttp()) {
+      String body = Resource.logResponse(r);
       return Transmogrifier.mappedJsonResponse(new ByteArrayInputStream(body.getBytes("UTF-8")), c);
     } else {
       return Transmogrifier.mappedJsonResponse(r.getInputStream(), c);
@@ -207,9 +208,9 @@ public class Resource {
     return u.replaceFirst("/api/v2/", "/content/api/v2/");
   }
   
-  protected String logResponse(Response r, Log l) {
+  private static String logResponse(Response r) {
     try {
-      l.debug("Response status code: " + r.getStatus());
+      Resource.log.debug("Response status code: " + r.getStatus());
       StringBuilder b = new StringBuilder();
       byte[] buf = new byte[1024];
       InputStream i = r.getInputStream();
@@ -219,13 +220,13 @@ public class Resource {
         b.append(new String(buf2, "UTF-8"));
       }
       if(b.length() > 0) {
-        l.debug("Response body: " + b.toString());
+        Resource.log.debug("Response body: " + b.toString());
         return b.toString();
       } else {
-        l.debug("No body.");
+        Resource.log.debug("No body.");
       }
     } catch(IOException ex) {
-      l.debug("Request failed: " + ex);
+      Resource.log.debug("Request failed: " + ex);
     }
     return null;    
   }

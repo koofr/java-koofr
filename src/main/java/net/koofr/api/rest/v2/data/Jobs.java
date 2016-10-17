@@ -1,7 +1,7 @@
 package net.koofr.api.rest.v2.data;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import net.koofr.api.json.JsonBase;
 
@@ -9,13 +9,17 @@ public class Jobs implements JsonBase {
 
   public List<Job> jobs;
   
+  public static class AttributeMap extends HashMap<String, Object> {
+    private static final long serialVersionUID = 1L;
+  };
+  
   public static class Job implements JsonBase {
     public String id;
-    public String type;
-    public Map<String, Object> parameters;
+    public String type;    
+    public AttributeMap parameters;
     public String state;
     public Integer progress;
-    public Map<String, Object> result;
+    public AttributeMap result;
     public Long created;
   }
   

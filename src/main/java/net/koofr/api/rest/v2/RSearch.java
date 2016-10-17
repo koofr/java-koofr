@@ -23,7 +23,7 @@ public class RSearch extends Resource {
     public String path;
     
     public String[] toParameterArray() {
-      ArrayList<String> params = new ArrayList<>();
+      ArrayList<String> params = new ArrayList<String>();
       if(query != null) {
         params.add("query");
         params.add(query);

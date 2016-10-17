@@ -27,13 +27,17 @@ import net.koofr.api.json.JsonException;
 import net.koofr.api.json.Transmogrifier;
 import net.koofr.api.rest.v2.Api;
 import net.koofr.api.rest.v2.RMounts.RMount;
+import net.koofr.api.rest.v2.RSearch.QueryParameters;
 import net.koofr.api.rest.v2.data.ConnectionList;
 import net.koofr.api.rest.v2.data.Groups.*;
 import net.koofr.api.rest.v2.data.Devices.*;
 import net.koofr.api.rest.v2.data.Mounts.*;
 import net.koofr.api.rest.v2.data.Files.*;
+import net.koofr.api.rest.v2.data.Jobs.*;
 import net.koofr.api.rest.v2.data.Mounts;
 import net.koofr.api.rest.v2.data.Permissions;
+import net.koofr.api.rest.v2.data.SearchResult;
+import net.koofr.api.rest.v2.data.SearchResult.SearchHit;
 import net.koofr.api.rest.v2.data.Self;
 import net.koofr.api.rest.v2.data.User;
 import net.koofr.api.rest.v2.data.Bookmarks.Bookmark;
@@ -125,6 +129,8 @@ public class Main {
       }
     }
     if(mid != null) {
+      RMount rm = api.mounts().mount(mid);
+
       Transmogrifier.dumpObject(api.mounts().mount(mid).get()); System.out.println();
       System.out.println();
       api.mounts().mount(mid).edit("New name");
@@ -160,8 +166,6 @@ public class Main {
       Transmogrifier.dumpObject(api.mounts().get()); System.out.println();
       System.out.println();
 
-      RMount rm = api.mounts().mount(mid);
-
       Transmogrifier.dumpObject(rm.bundle("/Test")); System.out.println();
       System.out.println();
       Transmogrifier.dumpObject(rm.files().list("/Test")); System.out.println();
@@ -172,6 +176,7 @@ public class Main {
       System.out.println();
       Transmogrifier.dumpObject(rm.files().versions().get("/Test")); System.out.println();
       System.out.println();
+
       rm.files().createFolder("/Test", "Folder");
       rm.files().rename("/Test/Folder", "Folder2");
       System.out.print(rm.files().getDownloadUrl("/Test/Folder2")); System.out.println();
@@ -229,11 +234,36 @@ public class Main {
       Files.copy(dl.downloadStream, FileSystems.getDefault().getPath("pp2.bin"));
       dl.close();
       
+      JobCopyFiles cj = new JobCopyFiles();
+      cj.files = new ArrayList<JobMountPathPair>();
+      JobMountPathPair pp = new JobMountPathPair();
+      pp.dst = new JobMountPath();
+      pp.src = new JobMountPath();
+      pp.src.mountId = mid;
+      pp.src.path = "/Test/Folder2";
+      pp.dst.mountId = mid;
+      pp.dst.path = "/Test/Folder4/CopyOfFolder2";
+      cj.files.add(pp);
+      Job job = api.jobs().files().copy(cj.files);
+      Transmogrifier.dumpObject(job);
+      
+      while(!job.state.equals("done") && !job.state.equals("failed")) {
+        job = api.jobs().job(job.id).get();        
+        try { Thread.sleep(1*1000L); } catch(InterruptedException ex) {}
+      }
+      
       rm.files().delete("/Test/Folder2", null);
       rm.files().delete("/Test/Folder4", null);
       
-      /* TODO: test jobs */
     }
+  
+    QueryParameters qp = new QueryParameters();
+    qp.query = "IMG";
+    SearchResult sr = api.search().query(qp);
+    for(SearchHit h: sr.hits) {
+      System.out.println(h.mountId + ":" + h.path);
+    }
+  
   }
   
   public static void main(String[] args) throws Exception {

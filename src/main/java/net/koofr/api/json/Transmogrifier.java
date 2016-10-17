@@ -200,7 +200,7 @@ public class Transmogrifier {
     } else if(v.isString()) {
       return v.asString();        
     } else if(v.isArray()) {
-      List<Object> rv = new ArrayList<>();
+      List<Object> rv = new ArrayList<Object>();
       JsonArray a = v.asArray();
       int len = a.size();
       for(int i = 0; i < len; i++) {
@@ -211,7 +211,7 @@ public class Transmogrifier {
       return v.asBoolean();
     } else if(v.isObject()) {
       Iterator<Member> i = v.asObject().iterator();
-      HashMap<String, Object> rv = new HashMap<>();
+      HashMap<String, Object> rv = new HashMap<String, Object>();
       while(i.hasNext()) {
         Member m = i.next();
         JsonValue sv = m.getValue();
@@ -280,7 +280,7 @@ public class Transmogrifier {
       int size = arr.size();
       T rv;
       if(c.equals(List.class)) {
-        rv = c.cast(new ArrayList<>());
+        rv = c.cast(new ArrayList<Object>());
       } else {
         Constructor<T> cns = c.getConstructor();
         rv = cns.newInstance();        
@@ -300,7 +300,7 @@ public class Transmogrifier {
       JsonObject obj = src.asObject();
       T rv;
       if(c.equals(Map.class)) {
-        rv = c.cast(new HashMap<>());
+        rv = c.cast(new HashMap<String, Object>());
       } else {
         Constructor<T> cns = c.getConstructor();
         rv = cns.newInstance();        

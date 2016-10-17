@@ -2,9 +2,7 @@ organization := "net.koofr"
 
 name := "java-koofr"
 
-version := "2.2.2"
-
-resolvers += "restlet" at "http://maven.restlet.org"
+version := "3.0.0"
 
 autoScalaLibrary := false
 
@@ -12,9 +10,9 @@ crossPaths := false
 
 lazy val sdk = project in file(".")
 
-// javacOptions ++= Seq("-source", "1.6")
+javacOptions ++= Seq("-source", "1.6")
 
-// javacOptions in compile ++= Seq("-target", "1.6")
+javacOptions in compile ++= Seq("-target", "1.6")
 
 seq(bintraySettings:_*)
 
