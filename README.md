@@ -2,47 +2,45 @@
 
 This is a Java SDK for easy interaction with Koofr service. See the `examples` folder for a quick start.
 
-## Getting started
-
-For sane defaults you should use `DefaultClientFactory` to obtain an instance of `StorageApi`. For more information read the JavaDoc.
-
-### Mounts
-Mounts are the central concept to Koofr. Each mount is a virtual filesystem root; it may be a physical device, a shared folder or something else. Each mount has a unique identifier to reference it.
-
-A mount may contain other mounts. For example: you have a storage device *My Place* where you have a folder *Pictures*. If you share *Pictures* you will implicitly create a new mount.  So a picture stored under `My Place | /Pictures/01.jpg` will also be accessible through `Pictures | /01.jpg`.
-
-### Files
-Each file is identified by a pair of mount identifier and a path. Therefore all file operations take a mount id (to specify which filesystem root to use) and a path.
-
-Files stored in Koofr are immutable. This means you cannot modify file after you upload it. You can however delete it and replace it with a modified version - koofr will detect this as a modification.
-
-
-## Example
-This is the *info* example that shows how to connect to Koofr by printing out details about currently logged in user.  
-
+## A Quick Start
 
 ```java
-package info;
-
-import net.koofr.api.v2.StorageApi;
-import net.koofr.api.v2.DefaultClientFactory;
-import net.koofr.api.v2.StorageApiException;
+import net.koofr.api.auth.Authenticator;
+import net.koofr.api.auth.basic.HttpBasicAuthenticator;
+import net.koofr.api.http.Client;
+import net.koofr.api.rest.v2.Api;
 
 public class Main {
-    public static void main(String[] args) throws StorageApiException {
-        String host = args[0];
-        String username = args[1];
-        String password = args[2];
-        StorageApi api = DefaultClientFactory.create(host, username, password);
 
-        System.out.println(api.getUserInfo());
-    }
+  public static void main(String args[]) {
+
+    Client c = new BasicClient();
+    Authenticator a = new HttpBasicAuthenticator("username", "password");
+    Api api = new Api("https://app.koofr.net/api/v2", a, c);
+
+    Self self = api.self().get();
+    
+  }
+
 }
 ```
 
-### Running
+Obviously, you need an HTTP Client and an Authenticator to use the Api. 
 
-Examples are already configured to be ran using sbt
+The SDK provides an abstraction for both. You probably won't need to implement your
+own authenticator since the ones supplied in net.kofr.api.auth subpackages cover all
+possible authentication options you have with Koofr: OAuth2, HTTP Basic and our own
+authentication token scheme.
+
+You might want to implement your own HTTP client on the other hand: we provide a simple one
+based on the HttpURLConnection class from the Java runtime, but you might want to use an
+Apache HttpComponents based one or whatever the preferred option on your platform is.
+You're welcome, you just need to implement the Client, Request and Response interfaces.
+
+
+## Examples
+
+There are two examples demonstrating use of a Koofr client. Run them via SBT. 
 
     sbt
     project info
@@ -56,6 +54,11 @@ or
 
 Hostname is passed in without protocol and without any slashes.
 
+You can also use OAuth2-based authentication in the examples, by replacing the username and
+password with token URL, client ID, client secret and grant code. However, you need to get
+the grant code before running the examples: perhaps with curl or with
+[OAuth Playground](https://developers.google.com/oauthplayground/)
+
 
 ## Building
 
@@ -67,5 +70,4 @@ To build jars use
 ## Maven
 
 Prebuilt jars are available for maven at [JCenter](https://bintray.com/koofr/maven/java-koofr/view), group ID `net.koofr`, artefact ID `java-koofr`
-
 

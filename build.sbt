@@ -2,9 +2,7 @@ organization := "net.koofr"
 
 name := "java-koofr"
 
-version := "2.2.2"
-
-resolvers += "restlet" at "http://maven.restlet.org"
+version := "2.99.0"
 
 autoScalaLibrary := false
 
@@ -41,10 +39,7 @@ pomExtra :=
     </developers>
 
 libraryDependencies ++= Seq(
-  "org.apache.httpcomponents" % "httpclient" % "4.2.1",
-  "org.restlet.jse" % "org.restlet.ext.jackson" % "2.3.3",
-  "org.restlet.jse" % "org.restlet.ext.httpclient" % "2.3.3" exclude("org.restlet.jse", "org.restlet.ext.ssl"),
-  "org.restlet.jse" % "org.restlet.ext.oauth" % "2.3.3"
+  "com.eclipsesource.minimal-json" % "minimal-json" % "0.9.4"
 )
 
 lazy val exampleCmdline = Project(
