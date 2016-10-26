@@ -1,4 +1,4 @@
-package net.koofr.api.rest.v2;
+package net.koofr.api.http.errors;
 
 import java.io.IOException;
 

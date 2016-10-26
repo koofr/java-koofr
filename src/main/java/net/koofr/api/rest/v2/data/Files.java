@@ -46,6 +46,17 @@ public class Files implements JsonBase {
     public TransferCallback callback;
   }
   
+  public static class DownloadOptions {
+    public static final String THUMBNAIL_SIZE_SMALL    = "small";
+    public static final String THUMBNAIL_SIZE_SHMEDIUM = "shmedium";
+    public static final String THUMBNAIL_SIZE_MEDIUM   = "medium";
+    public static final String THUMBNAIL_SIZE_LARGE    = "large";
+    public static final String THUMBNAIL_SIZE_HUGE     = "huge";
+    
+    public String thumbnailSize;
+    public String convertFormat;
+  }
+  
   public static class DeleteOptions {
     public Long modified;
     public Long size;

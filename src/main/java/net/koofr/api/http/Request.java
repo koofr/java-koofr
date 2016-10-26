@@ -7,6 +7,7 @@ public interface Request {
 
   public interface TransferCallback {
     public void progress(Long transferred, Long total);
+    public boolean isCancelled();
   }
   
   void setHeaders(Map<String, String> headers);

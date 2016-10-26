@@ -8,7 +8,6 @@ import java.util.Map;
 
 import net.koofr.api.http.Response;
 import net.koofr.api.http.content.MultipartBody;
-import net.koofr.api.http.errors.HttpException;
 import net.koofr.api.json.JsonBase;
 import net.koofr.api.json.JsonException;
 import net.koofr.api.rest.v2.RMounts.RMount;
@@ -260,8 +259,20 @@ public class RFiles extends Resource {
       url = contentUrl(url);      
     }
     
-    public Response get(String path) throws IOException {
-      return httpGet("path", path);
+    public Response get(String path, DownloadOptions options) throws IOException {
+      ArrayList<String> params = new ArrayList<String>();
+      params.add("path"); params.add(path);
+      if(options != null) {
+        if(options.thumbnailSize != null) {
+          params.add("thumb"); params.add(options.thumbnailSize);
+        }
+        if(options.convertFormat != null) {
+          params.add("convert"); params.add(options.convertFormat);
+        }
+      }
+      String[] p = new String[params.size()];
+      params.toArray(p);            
+      return httpGet(p);
     }
     
     public UploadResult put(String path, String name, String contentType, Long contentSize, InputStream content, UploadOptions options) throws IOException, JsonException {
@@ -282,7 +293,7 @@ public class RFiles extends Resource {
           params.add("overwriteIgnoreNonexisting"); params.add(options.ignoreNonExisting.toString());        
         }
         if(options.noRename != null) {
-          params.add("autorename"); params.add(options.noRename.toString());        
+          params.add("autorename"); params.add(String.valueOf(!options.noRename));        
         }
         if(options.forceOverwrite != null) {
           params.add("overwrite"); params.add(options.forceOverwrite.toString());        
@@ -294,8 +305,8 @@ public class RFiles extends Resource {
     }
   }
   
-  public DownloadResult download(String path) throws IOException {
-    Response r = new RFilesContent(this, "/get").get(path);
+  public DownloadResult download(String path, DownloadOptions options) throws IOException {
+    Response r = new RFilesContent(this, "/get").get(path, options);
     return resolveDownload(r);
   }
   
