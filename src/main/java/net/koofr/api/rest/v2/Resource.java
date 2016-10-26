@@ -16,6 +16,7 @@ import net.koofr.api.http.Request;
 import net.koofr.api.http.Request.TransferCallback;
 import net.koofr.api.http.Response;
 import net.koofr.api.http.content.JsonBody;
+import net.koofr.api.http.errors.BadContentTypeException;
 import net.koofr.api.http.errors.HttpException;
 import net.koofr.api.json.JsonException;
 import net.koofr.api.json.Transmogrifier;

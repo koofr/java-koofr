@@ -9,6 +9,7 @@ import java.util.Map;
 import net.koofr.api.http.Body;
 import net.koofr.api.http.Request;
 import net.koofr.api.http.Response;
+import net.koofr.api.http.errors.CancelledException;
 
 public class BasicRequest implements Request {
 
@@ -56,6 +57,9 @@ public class BasicRequest implements Request {
     int n = 0;
     long transferred = 0;
     while((n = i.read(b)) >= 0) {
+      if(cb.isCancelled()) {
+        throw new CancelledException();
+      }
       if(n > 0) {
         o.write(b, 0, n);
         if(cb != null) {
