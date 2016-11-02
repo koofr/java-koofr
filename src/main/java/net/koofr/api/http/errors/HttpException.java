@@ -10,29 +10,37 @@ public class HttpException extends IOException {
   int code;
   
   public static class Conflict extends HttpException {
+    private static final long serialVersionUID = 1L;
+    
     protected Conflict() {
       super(409, "Conflict");
     }
   }
   
   public static class Unauthorized extends HttpException {
+    private static final long serialVersionUID = 1L;
+
     protected Unauthorized() {
       super(401, "Unauthorized");
     }
   }
 
   public static class NotFound extends HttpException {
+    private static final long serialVersionUID = 1L;
+
     protected NotFound() {
       super(404, "Not found");
     }
   }
   
   public static class Forbidden extends HttpException {
+    private static final long serialVersionUID = 1L;
+
     protected Forbidden() {
       super(403, "Forbidden");
     }
   }
-  
+
   public static Response checkResponse(Response rs) throws IOException {
     int code = rs.getStatus(); 
     if(code / 100 == 2) {
