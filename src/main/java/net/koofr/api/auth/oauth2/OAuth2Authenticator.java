@@ -75,14 +75,15 @@ public class OAuth2Authenticator implements Authenticator {
   }
 
   public void arm(Request request) throws IOException {
-    if(refreshToken == null) {
-      throw new IOException("Missing refresh token.");
+    if(refreshToken != null) {
+      if(accessToken == null || accessExpiration == null ||
+          new Date().before(accessExpiration)) {
+        setRefreshToken(refreshToken);
+      }
+      request.addHeader("Authorization", "Bearer " + accessToken);
+    } else {
+      /* well, we'll try without authentication then */
     }
-    if(accessToken == null || accessExpiration == null ||
-        new Date().before(accessExpiration)) {
-      setRefreshToken(refreshToken);
-    }
-    request.addHeader("Authorization", "Bearer " + accessToken);
   }
 
   public String getRefreshToken() {
