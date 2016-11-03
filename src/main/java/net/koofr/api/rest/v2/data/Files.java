@@ -13,6 +13,9 @@ import net.koofr.api.rest.v2.data.Common.StringList;
 public class Files implements JsonBase {
 
   public static class File implements JsonBase {
+    public static final String TYPE_DIR  = "dir";
+    public static final String TYPE_FILE = "file";
+
     public String name;
     public String type;
     public Long modified;
