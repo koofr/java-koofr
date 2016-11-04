@@ -57,7 +57,7 @@ public class BasicRequest implements Request {
     int n = 0;
     long transferred = 0;
     while((n = i.read(b)) >= 0) {
-      if(cb.isCancelled()) {
+      if(cb != null && cb.isCancelled()) {
         throw new CancelledException();
       }
       if(n > 0) {
