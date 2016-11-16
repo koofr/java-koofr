@@ -19,7 +19,7 @@ public class Links {
     public String password;
     public Long validFrom;
     public Long validTo;
-    public boolean passwordRequired;
+    public Boolean passwordRequired;
   }
 
   public List<Link> links;  
