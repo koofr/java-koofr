@@ -2,6 +2,7 @@ package net.koofr.api.rest.v2.data;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -10,9 +11,12 @@ import net.koofr.api.http.Request.TransferCallback;
 import net.koofr.api.json.JsonBase;
 import net.koofr.api.rest.v2.data.Common.StringList;
 
-public class Files implements JsonBase {
+public class Files implements JsonBase, Serializable {
+  private static final long serialVersionUID = 1L;
 
-  public static class File implements JsonBase {
+  public static class File implements JsonBase, Serializable {
+    private static final long serialVersionUID = 1L;
+
     public static final String TYPE_DIR  = "dir";
     public static final String TYPE_FILE = "file";
 
@@ -26,7 +30,9 @@ public class Files implements JsonBase {
     public List<File> children;
   }
   
-  public static class Version implements JsonBase {
+  public static class Version implements JsonBase, Serializable {
+    private static final long serialVersionUID = 1L;
+
     public String id;
     public String type;
     public Long modified;
@@ -35,7 +41,9 @@ public class Files implements JsonBase {
     public Map<String, StringList> tags;    
   }
   
-  public static class Versions implements JsonBase {
+  public static class Versions implements JsonBase, Serializable {
+    private static final long serialVersionUID = 1L;
+
     public List<Version> versions;
   }
   
@@ -67,15 +75,17 @@ public class Files implements JsonBase {
     public Boolean ifEmpty;   
   }
   
-  public static class Upload implements JsonBase {
+  public static class Upload implements JsonBase, Serializable {
+    private static final long serialVersionUID = 1L;
+
     public String name;
     public String type;
   }
   
-  public static class UploadResult extends ArrayList<Upload> {
+  public static class UploadResult extends ArrayList<Upload> implements Serializable {
     private static final long serialVersionUID = 1L;
   }
-  
+
   public static class DownloadResult {
     public String contentType;
     public Long contentLength;

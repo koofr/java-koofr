@@ -1,5 +1,6 @@
 package net.koofr.api.rest.v2.data;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -9,9 +10,12 @@ import net.koofr.api.rest.v2.data.Links.Link;
 import net.koofr.api.rest.v2.data.Mounts.Mount;
 import net.koofr.api.rest.v2.data.Receivers.Receiver;
 
-public class SearchResult implements JsonBase {
+public class SearchResult implements JsonBase, Serializable {
+  private static final long serialVersionUID = 1L;
 
-  public static class SearchHit implements JsonBase {
+  public static class SearchHit implements JsonBase, Serializable {
+    private static final long serialVersionUID = 1L;
+
     public String mountId;
     public String path;
     public Double score;

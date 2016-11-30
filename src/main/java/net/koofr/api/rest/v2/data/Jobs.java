@@ -1,19 +1,23 @@
 package net.koofr.api.rest.v2.data;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 
 import net.koofr.api.json.JsonBase;
 
-public class Jobs implements JsonBase {
+public class Jobs implements JsonBase, Serializable {
+  private static final long serialVersionUID = 1L;
 
   public List<Job> jobs;
   
-  public static class AttributeMap extends HashMap<String, Object> {
+  public static class AttributeMap extends HashMap<String, Object> implements Serializable {
     private static final long serialVersionUID = 1L;
   };
   
-  public static class Job implements JsonBase {
+  public static class Job implements JsonBase, Serializable {
+    private static final long serialVersionUID = 1L;
+
     public String id;
     public String type;    
     public AttributeMap parameters;
@@ -23,12 +27,16 @@ public class Jobs implements JsonBase {
     public Long created;
   }
   
-  public static class JobMountPath implements JsonBase {
+  public static class JobMountPath implements JsonBase, Serializable {
+    private static final long serialVersionUID = 1L;
+
     public String mountId;
     public String path;
   }
   
-  public static class JobMountPathPair implements JsonBase {
+  public static class JobMountPathPair implements JsonBase, Serializable {
+    private static final long serialVersionUID = 1L;
+
     public JobMountPath src;
     public JobMountPath dst;
   }
@@ -36,18 +44,24 @@ public class Jobs implements JsonBase {
   public static class JobCreate implements JsonBase {    
   }
   
-  public static class JobRemoveFiles extends JobCreate {
+  public static class JobRemoveFiles extends JobCreate implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     public List<JobMountPath> files;
   }
   
-  public static class JobCopyMoveFiles extends JobCreate {
+  public static class JobCopyMoveFiles extends JobCreate implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     public List<JobMountPathPair> files;
   }
 
-  public static class JobCopyFiles extends JobCopyMoveFiles {
+  public static class JobCopyFiles extends JobCopyMoveFiles implements Serializable {
+    private static final long serialVersionUID = 1L;
   }
 
-  public static class JobMoveFiles extends JobCopyMoveFiles {
+  public static class JobMoveFiles extends JobCopyMoveFiles implements Serializable {
+    private static final long serialVersionUID = 1L;
   }
   
 }
