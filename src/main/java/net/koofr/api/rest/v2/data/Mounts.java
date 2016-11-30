@@ -1,15 +1,19 @@
 package net.koofr.api.rest.v2.data;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
 import net.koofr.api.json.JsonBase;
 
-public class Mounts implements JsonBase {
+public class Mounts implements JsonBase, Serializable {
+  private static final long serialVersionUID = 1L;
 
   public List<Mount> mounts;
   
-  public static class MountCandidate implements JsonBase {
+  public static class MountCandidate implements JsonBase, Serializable {
+    private static final long serialVersionUID = 1L;
+    
     public String id;
     public String name;
     public String email;
@@ -17,20 +21,26 @@ public class Mounts implements JsonBase {
     public String groupName;
   }
   
-  public static class MountUser implements JsonBase {
+  public static class MountUser implements JsonBase, Serializable {
+    private static final long serialVersionUID = 1L;
+    
     public String id;
     public String name;
     public String email;
     public Permissions permissions;
   }
   
-  public static class MountGroup implements JsonBase {
+  public static class MountGroup implements JsonBase, Serializable {
+    private static final long serialVersionUID = 1L;
+    
     public String id;
     public String name;
     public Permissions permisssions; 
   }
   
-  public static class MountMember implements JsonBase {
+  public static class MountMember implements JsonBase, Serializable {
+    private static final long serialVersionUID = 1L;
+    
     public String id;
     public String name;
     public String email;
@@ -38,13 +48,17 @@ public class Mounts implements JsonBase {
     public Boolean isGroup;
   }
   
-  public static class MountRoot implements JsonBase {
+  public static class MountRoot implements JsonBase, Serializable {
+    private static final long serialVersionUID = 1L;
+    
     public String id;
     public String name;
     public String path;
   }
   
-  public static class Mount implements JsonBase {
+  public static class Mount implements JsonBase, Serializable {
+    private static final long serialVersionUID = 1L;
+
     public String id;
     public String name;
     public String type;

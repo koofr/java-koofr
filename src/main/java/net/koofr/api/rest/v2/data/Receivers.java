@@ -1,12 +1,16 @@
 package net.koofr.api.rest.v2.data;
 
+import java.io.Serializable;
 import java.util.List;
 
 import net.koofr.api.json.JsonBase;
 
-public class Receivers implements JsonBase {
+public class Receivers implements JsonBase, Serializable {
+  private static final long serialVersionUID = 1L;
 
-  public static class Receiver implements JsonBase {
+  public static class Receiver implements JsonBase, Serializable {
+    private static final long serialVersionUID = 1L;
+    
     public String id;
     public String name;
     public String path;

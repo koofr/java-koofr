@@ -1,8 +1,9 @@
 package net.koofr.api.rest.v2.data;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
-public class Permissions extends HashMap<String, Boolean> {
+public class Permissions extends HashMap<String, Boolean> implements Serializable {
   private static final long serialVersionUID = 1L;
   
   public static enum P {
