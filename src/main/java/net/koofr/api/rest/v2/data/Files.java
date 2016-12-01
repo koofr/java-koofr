@@ -47,6 +47,12 @@ public class Files implements JsonBase, Serializable {
     public List<Version> versions;
   }
   
+  public static class VersionRecover implements JsonBase, Serializable {
+    private static final long serialVersionUID = 1L;
+
+    public String newPath;    
+  }
+  
   public static class UploadOptions {
     public Long modified;
     public Long size;

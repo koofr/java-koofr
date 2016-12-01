@@ -104,7 +104,7 @@ public class Resource {
   }  
     
   protected Response httpPost(String... params) throws IOException {
-    return httpArmAndExecute(httpClient.post(urlWithParameters(url)), null, null);
+    return httpArmAndExecute(httpClient.post(urlWithParameters(params)), null, null);
   }
 
   protected Response httpPost(Body body, String... params) throws IOException {
@@ -145,6 +145,10 @@ public class Resource {
 
   protected <T> T postJsonResult(Object body, Class<T> c, String... params) throws JsonException, IOException {
     return resolveJsonResult(httpPost(new JsonBody(Transmogrifier.mapObject(body)), params), c);
+  }
+
+  protected <T> T postJsonResult(Class<T> c, String... params) throws JsonException, IOException {
+    return resolveJsonResult(httpPost(params), c);
   }
   
   protected void postJsonNoResult(Object body, String... params) throws JsonException, IOException {
