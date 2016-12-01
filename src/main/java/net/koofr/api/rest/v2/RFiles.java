@@ -72,7 +72,7 @@ public class RFiles extends Resource {
     }
     
     public String get(String path, String version) throws IOException, JsonException {
-      VersionsRecover r = postJsonResult(null, VersionsRecover.class, "path", path, "version", version);
+      VersionsRecover r = postJsonResult(VersionsRecover.class, "path", path, "version", version);
       return r.newPath;
     }
   }
