@@ -9,6 +9,10 @@ public class HttpException extends IOException {
 
   int code;
   
+  public int getCode() {
+    return code;
+  }
+  
   public static class Conflict extends HttpException {
     private static final long serialVersionUID = 1L;
     
