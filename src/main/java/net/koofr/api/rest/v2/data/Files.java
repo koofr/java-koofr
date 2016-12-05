@@ -81,17 +81,6 @@ public class Files implements JsonBase, Serializable {
     public Boolean ifEmpty;   
   }
   
-  public static class Upload implements JsonBase, Serializable {
-    private static final long serialVersionUID = 1L;
-
-    public String name;
-    public String type;
-  }
-  
-  public static class UploadResult extends ArrayList<Upload> implements Serializable {
-    private static final long serialVersionUID = 1L;
-  }
-
   public static class DownloadResult {
     public String contentType;
     public Long contentLength;

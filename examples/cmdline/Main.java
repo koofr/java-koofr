@@ -21,15 +21,16 @@ import net.koofr.api.json.JsonException;
 import net.koofr.api.json.Transmogrifier;
 import net.koofr.api.rest.v2.Api;
 import net.koofr.api.rest.v2.RSearch.QueryParameters;
+import net.koofr.api.rest.v2.Resource;
 import net.koofr.api.rest.v2.data.Files;
 import net.koofr.api.rest.v2.data.Files.DownloadResult;
 import net.koofr.api.rest.v2.data.Files.File;
 import net.koofr.api.rest.v2.data.Files.UploadOptions;
-import net.koofr.api.rest.v2.data.Files.UploadResult;
 import net.koofr.api.rest.v2.data.Mounts;
 import net.koofr.api.rest.v2.data.Mounts.Mount;
 import net.koofr.api.rest.v2.data.SearchResult;
 import net.koofr.api.rest.v2.data.SearchResult.SearchHit;
+import net.koofr.api.util.StdLog;
 
 public class Main {
   public static void main(String[] args) throws Exception {
@@ -137,7 +138,7 @@ class Example implements Runnable {
       System.out.print("enter target directory: ");
       String dirname = sc.nextLine().trim();
       String path = (this.path + "/" + name).replaceAll("/+", "/");
-      DownloadResult dl = api.mounts().mount(this.mountId).files().download(path);
+      DownloadResult dl = api.mounts().mount(this.mountId).files().download(path, null);
       java.nio.file.Files.copy(dl.downloadStream, FileSystems.getDefault().getPath(dirname, name));
       dl.close();
       System.out.println("\n");
@@ -152,7 +153,7 @@ class Example implements Runnable {
       String name = parts[parts.length - 1];
       java.io.File fl = new java.io.File(localPath);
       FileInputStream is = new FileInputStream(fl);
-      UploadResult ul = api.mounts().mount(this.mountId).files().upload(this.path, name, "application/octet-stream", fl.length(), is, options);
+      File ul = api.mounts().mount(this.mountId).files().upload(this.path, name, "application/octet-stream", fl.length(), is, options);
   }
 
   private void search() throws IOException, JsonException {
@@ -228,5 +229,10 @@ class Example implements Runnable {
 class SimpleProgressListener implements TransferCallback  {
   public void progress(Long transferred, Long total) {
     System.out.print("Progress: " + transferred + "/" + total + " bytes\r");
+  }
+  
+  @Override
+  public boolean isCancelled() {
+    return false;
   }
 };

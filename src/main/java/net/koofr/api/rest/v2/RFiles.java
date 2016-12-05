@@ -275,10 +275,11 @@ public class RFiles extends Resource {
       return httpGet(p);
     }
     
-    public UploadResult put(String path, String name, String contentType, Long contentSize, InputStream content, UploadOptions options) throws IOException, JsonException {
+    public File put(String path, String name, String contentType, Long contentSize, InputStream content, UploadOptions options) throws IOException, JsonException {
       MultipartBody body = new MultipartBody(name, contentType, contentSize, content);
       ArrayList<String> params = new ArrayList<String>();
       params.add("path"); params.add(path);
+      params.add("info"); params.add("true");
       if(options != null) {
         if(options.size != null) {        
           params.add("overwriteIfSize"); params.add(options.size.toString());
@@ -298,10 +299,10 @@ public class RFiles extends Resource {
         if(options.forceOverwrite != null) {
           params.add("overwrite"); params.add(options.forceOverwrite.toString());        
         }
-      }
+      }      
       String[] p = new String[params.size()];
-      params.toArray(p);      
-      return resolveJsonResult(httpPost(body, options.callback, p), UploadResult.class);
+      params.toArray(p);
+      return resolveJsonResult(httpPost(body, options.callback, p), File.class);
     }
   }
   
@@ -310,7 +311,7 @@ public class RFiles extends Resource {
     return resolveDownload(r);
   }
   
-  public UploadResult upload(String path, String name, String contentType, Long contentSize, InputStream content, UploadOptions options) throws IOException, JsonException {
+  public File upload(String path, String name, String contentType, Long contentSize, InputStream content, UploadOptions options) throws IOException, JsonException {
     return new RFilesContent(this, "/put").put(path, name, contentType, contentSize, content, options);
   }
   

@@ -12,7 +12,9 @@ public class BasicClient implements Client {
   
   private BasicRequest createRequest(String url) throws MalformedURLException, IOException {
     URL u = new URL(url);
-    return new BasicRequest((HttpURLConnection)u.openConnection());
+    BasicRequest r = new BasicRequest((HttpURLConnection)u.openConnection());
+    r.addHeader("X-Koofr-Version", "2.1");
+    return r;
   }
   
   @Override
