@@ -37,6 +37,7 @@ import net.koofr.api.rest.v2.data.Jobs.*;
 import net.koofr.api.rest.v2.data.Mounts;
 import net.koofr.api.rest.v2.data.Permissions;
 import net.koofr.api.rest.v2.data.SearchResult;
+import net.koofr.api.rest.v2.data.Trash;
 import net.koofr.api.rest.v2.data.SearchResult.SearchHit;
 import net.koofr.api.rest.v2.data.Self;
 import net.koofr.api.rest.v2.data.User;
@@ -45,9 +46,13 @@ import net.koofr.api.rest.v2.data.Bookmarks.Bookmark;
 public class Main {
 
   private static void cover(Api api) throws IOException, JsonException {
+    /*
     Self self = api.self().get();
     Transmogrifier.dumpObject(self); System.out.println();
 
+    Trash t = api.trash().get();
+    Transmogrifier.dumpObject(t); System.out.println();
+    
     ConnectionList cl = api.self().connections().get();
     Transmogrifier.dumpObject(cl); System.out.println();
     String oldF = self.firstName;
@@ -263,7 +268,7 @@ public class Main {
     for(SearchHit h: sr.hits) {
       System.out.println(h.mountId + ":" + h.path);
     }
-  
+    */
   }
   
   public static void main(String[] args) throws Exception {

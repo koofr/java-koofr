@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.koofr.api.json.JsonBase;
+import net.koofr.api.rest.v2.data.Common.StringList;
 import net.koofr.api.rest.v2.data.Mounts.Mount;
 
 public class Trash implements JsonBase, Serializable {
@@ -20,7 +21,7 @@ public class Trash implements JsonBase, Serializable {
     public Long size;
     public String contentType;
     public String versionId;
-    public Map<String, List<String>> tags;
+    public Map<String, StringList> tags;
   }
   
   public List<TrashFile> files;
