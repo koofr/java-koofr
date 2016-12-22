@@ -25,7 +25,7 @@ public class RLinks extends Resource {
   public Link create(String path) throws IOException, JsonException {
     LinkCreate c = new LinkCreate();
     c.path = path;
-    return postJsonResult(path, Link.class);
+    return postJsonResult(c, Link.class);
   }
   
   public static class RLink extends Resource {
