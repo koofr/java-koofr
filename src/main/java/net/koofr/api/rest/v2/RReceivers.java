@@ -25,7 +25,7 @@ public class RReceivers extends Resource {
   public Receiver create(String path) throws IOException, JsonException {
     ReceiverCreate c = new ReceiverCreate();
     c.path = path;
-    return postJsonResult(path, Receiver.class);
+    return postJsonResult(c, Receiver.class);
   }
   
   public static class RReceiver extends Resource {
