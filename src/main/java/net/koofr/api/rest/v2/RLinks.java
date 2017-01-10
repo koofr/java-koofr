@@ -66,8 +66,8 @@ public class RLinks extends Resource {
         super(parent, "/reset");
       }
       
-      public void reset() throws IOException, JsonException {
-        putJsonNoResult(null);
+      public Link reset() throws IOException, JsonException {
+        return putJsonResult(Link.class);
       }
     }
 
@@ -76,12 +76,12 @@ public class RLinks extends Resource {
         super(parent, "/password");
       }
       
-      public void delete() throws IOException, JsonException {
-        deleteNoResult();
+      public Link delete() throws IOException, JsonException {
+        return deleteResult(Link.class);
       }
       
-      public void reset() throws IOException, JsonException {
-        new RLinkPasswordReset(this).reset();
+      public Link reset() throws IOException, JsonException {
+        return new RLinkPasswordReset(this).reset();
       }
     }
 
@@ -107,10 +107,14 @@ public class RLinks extends Resource {
       }
     }
     
-    public void setValidity(Date from, Date to) throws IOException, JsonException {
-      new RLinkValidity(this).set(from, to);
+    public Link setValidity(Date from, Date to) throws IOException, JsonException {
+      return new RLinkValidity(this).set(from, to);
     }
     
+  }
+  
+  public RLink link(String id) {
+    return new RLink(this, id);
   }
   
 }
