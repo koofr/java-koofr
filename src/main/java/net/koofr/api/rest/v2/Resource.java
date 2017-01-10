@@ -135,14 +135,26 @@ public class Resource {
     resolveNoResult(httpDelete(params));
   }
 
+  protected <T> T deleteResult(Class<T> c, String... params) throws JsonException, IOException {
+    return resolveJsonResult(httpDelete(params), c);
+  }
+  
   protected <T> T putJsonResult(Object body, Class<T> c, String... params) throws JsonException, IOException {
     return resolveJsonResult(httpPut(new JsonBody(Transmogrifier.mapObject(body)), params), c);
+  }
+  
+  protected <T> T putJsonResult(Class<T> c, String... params) throws JsonException, IOException {
+    return resolveJsonResult(httpPut(params), c);
   }
   
   protected void putJsonNoResult(Object body, String... params) throws JsonException, IOException {
     resolveNoResult(httpPut(new JsonBody(Transmogrifier.mapObject(body)), params));
   }
 
+  protected void putJsonNoResult(String... params) throws JsonException, IOException {
+    resolveNoResult(httpPut(params));
+  }
+  
   protected <T> T postJsonResult(Object body, Class<T> c, String... params) throws JsonException, IOException {
     return resolveJsonResult(httpPost(new JsonBody(Transmogrifier.mapObject(body)), params), c);
   }
@@ -154,7 +166,11 @@ public class Resource {
   protected void postJsonNoResult(Object body, String... params) throws JsonException, IOException {
     resolveNoResult(httpPost(new JsonBody(Transmogrifier.mapObject(body)), params));
   }
-    
+
+  protected void postJsonNoResult(String... params) throws JsonException, IOException {
+    resolveNoResult(httpPost(params));
+  }
+  
   protected void resolveNoResult(Response r) throws IOException {
     if(Resource.shouldLogHttp()) {
       Resource.logResponse(r);

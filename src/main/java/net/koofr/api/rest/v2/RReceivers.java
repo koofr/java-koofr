@@ -66,8 +66,8 @@ public class RReceivers extends Resource {
         super(parent, "/reset");
       }
       
-      public void reset() throws IOException, JsonException {
-        putJsonNoResult(null);
+      public Receiver reset() throws IOException, JsonException {
+        return putJsonResult(Receiver.class);
       }
     }
 
@@ -76,12 +76,12 @@ public class RReceivers extends Resource {
         super(parent, "/password");
       }
       
-      public void delete() throws IOException, JsonException {
-        deleteNoResult();
+      public Receiver delete() throws IOException, JsonException {
+        return deleteResult(Receiver.class);
       }
       
-      public void reset() throws IOException, JsonException {
-        new RReceiverPasswordReset(this).reset();
+      public Receiver reset() throws IOException, JsonException {
+        return new RReceiverPasswordReset(this).reset();
       }
     }
 
@@ -107,10 +107,14 @@ public class RReceivers extends Resource {
       }
     }
     
-    public void setValidity(Date from, Date to) throws IOException, JsonException {
-      new RReceiverValidity(this).set(from, to);
+    public Receiver setValidity(Date from, Date to) throws IOException, JsonException {
+      return new RReceiverValidity(this).set(from, to);
     }
     
+  }
+  
+  public RReceiver receiver(String id) {
+    return new RReceiver(this, id);    
   }
   
 }
