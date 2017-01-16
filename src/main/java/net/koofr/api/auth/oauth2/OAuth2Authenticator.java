@@ -23,6 +23,8 @@ public class OAuth2Authenticator implements Authenticator {
   String accessToken;
   Date accessExpiration;
   
+  private static final int EXPIRATION_GUARD = 60*1000;
+  
   public OAuth2Authenticator(Client httpClient, String tokenUrl,
       String clientId, String clientSecret, String redirectUri) {
     this.httpClient = httpClient;
@@ -42,7 +44,7 @@ public class OAuth2Authenticator implements Authenticator {
       if(r != null && a != null && x > 0) {
         refreshToken = r;
         accessToken = a;
-        accessExpiration = new Date(new Date().getTime() + x*1000);
+        accessExpiration = new Date(new Date().getTime() + x*1000 - EXPIRATION_GUARD);
       }      
     } catch(Exception ex) {
       throw new IOException("Bad token response: " + o.toString(), ex);
@@ -77,7 +79,7 @@ public class OAuth2Authenticator implements Authenticator {
   public void arm(Request request) throws IOException {
     if(refreshToken != null) {
       if(accessToken == null || accessExpiration == null ||
-          new Date().before(accessExpiration)) {
+          new Date().after(accessExpiration)) {
         setRefreshToken(refreshToken);
       }
       request.addHeader("Authorization", "Bearer " + accessToken);
