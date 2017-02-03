@@ -31,7 +31,7 @@ public class RUsers extends Resource {
     }
     
     public DownloadResult get() throws IOException {
-      return resolveDownload(httpGet());
+      return resolveDownload(httpGet("nodefault", "true"));
     }      
   }
     

@@ -77,12 +77,9 @@ public class OAuth2Authenticator implements Authenticator {
   }
 
   public void arm(Request request) throws IOException {
-    if(refreshToken != null) {
-      if(accessToken == null || accessExpiration == null ||
-          new Date().after(accessExpiration)) {
-        setRefreshToken(refreshToken);
-      }
-      request.addHeader("Authorization", "Bearer " + accessToken);
+    String t = getAccessToken();
+    if(t != null) {
+      request.addHeader("Authorization", "Bearer " + t);
     } else {
       /* well, we'll try without authentication then */
     }
@@ -92,7 +89,13 @@ public class OAuth2Authenticator implements Authenticator {
     return refreshToken;
   }
   
-  public String getAccessToken() {
+  public String getAccessToken() throws IOException {
+    if(refreshToken != null) {
+      if(accessToken == null || accessExpiration == null ||
+          new Date().after(accessExpiration)) {
+        setRefreshToken(refreshToken);
+      }
+    }
     return accessToken;
   }
   
