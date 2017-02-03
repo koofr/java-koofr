@@ -2,7 +2,7 @@ organization := "net.koofr"
 
 name := "java-koofr"
 
-version := "2.99.11"
+version := "2.99.12"
 
 autoScalaLibrary := false
 

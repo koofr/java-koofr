@@ -183,7 +183,7 @@ public class RSelf extends Resource {
     }
     
     public DownloadResult get() throws IOException {
-      return resolveDownload(httpGet());
+      return resolveDownload(httpGet("nodefault", "true"));
     }
     
     public void update(InputStream content, String name, String contentType) throws IOException {
