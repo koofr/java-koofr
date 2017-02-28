@@ -33,6 +33,7 @@ public class BasicRequest implements Request {
 
   @Override
   public Response execute() {
+    cnx.setRequestProperty("Accept-Encoding", "gzip");
     return new BasicResponse(cnx);
   }
 
@@ -45,11 +46,15 @@ public class BasicRequest implements Request {
   public Response execute(Body body, TransferCallback cb) throws IOException {
     String contentType = body.getContentType();
     Long contentLength = body.getContentLength();
+    cnx.setRequestProperty("Accept-Encoding", "gzip");
     if(contentType != null) {
       cnx.setRequestProperty("Content-Type", contentType);
     }
     if(contentLength != null) {
       cnx.setRequestProperty("Content-Length", contentLength.toString());
+      cnx.setFixedLengthStreamingMode(contentLength);
+    } else {
+      cnx.setChunkedStreamingMode(0);      
     }
     OutputStream o = cnx.getOutputStream();
     InputStream i = body.getInputStream();
