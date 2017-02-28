@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 import net.koofr.api.http.Response;
 
@@ -23,7 +24,12 @@ public class BasicResponse implements Response {
 
   @Override
   public InputStream getInputStream() throws IOException {
-    return cnx.getInputStream();
+    String ce = cnx.getHeaderField("Content-Encoding");
+    if("gzip".equals(ce)) {
+      return new GZIPInputStream(cnx.getInputStream());
+    } else {
+      return cnx.getInputStream();
+    }
   }
 
   public Map<String, List<String>>getHeaders() {
