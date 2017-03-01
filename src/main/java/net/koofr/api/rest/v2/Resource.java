@@ -53,7 +53,7 @@ public class Resource {
   protected Response httpArmAndExecute(Request r, Body body, TransferCallback cb) throws IOException {
     if(auth != null) {
       auth.arm(r);
-    }  
+    }
     if(body != null) {
       if(Resource.shouldLogHttp()) {
         if(body instanceof JsonBody) {
@@ -172,56 +172,69 @@ public class Resource {
   }
   
   protected void resolveNoResult(Response r) throws IOException {
-    if(Resource.shouldLogHttp()) {
-      Resource.logResponse(r);
-      HttpException.checkResponse(r);
-    } else {
-      HttpException.checkResponse(r);
+    try {
+      if(Resource.shouldLogHttp()) {
+        Resource.logResponse(r);
+        HttpException.checkResponse(r);
+      } else {
+        HttpException.checkResponse(r);
+      }
+    } finally {
+      r.close();
     }
   }
   
   protected <T> T resolveJsonResult(Response r, Class<T> c) throws JsonException, IOException {
-    if(r.getStatus()/100 != 2) {
-      if(Resource.shouldLogHttp()) {
-        Resource.logResponse(r);
+    try {
+      if(r.getStatus()/100 != 2) {
+        if(Resource.shouldLogHttp()) {
+          Resource.logResponse(r);
+        }
+        HttpException.checkResponse(r);
       }
-      HttpException.checkResponse(r);
-    }
-    String contentType = r.getHeader("Content-Type");
-    Map<String, List<String>> headers = r.getHeaders();
-    if(Resource.shouldLogHttp()) {
-      for(String h: headers.keySet()) {
-        log.debug("Header: " + h);
-        for(String v: headers.get(h)) {
-          log.debug("  " + v);
+      String contentType = r.getHeader("Content-Type");
+      Map<String, List<String>> headers = r.getHeaders();
+      if(Resource.shouldLogHttp()) {
+        for(String h: headers.keySet()) {
+          log.debug("Header: " + h);
+          for(String v: headers.get(h)) {
+            log.debug("  " + v);
+          }
         }
       }
-    }
-    if(contentType == null || !contentType.startsWith("application/json")) {
-      throw new BadContentTypeException();
-    }
-    if(Resource.shouldLogHttp()) {
-      String body = Resource.logResponse(r);
-      return Transmogrifier.mappedJsonResponse(new ByteArrayInputStream(body.getBytes("UTF-8")), c);
-    } else {
-      return Transmogrifier.mappedJsonResponse(r.getInputStream(), c);
+      if(contentType == null || !contentType.startsWith("application/json")) {
+        throw new BadContentTypeException();
+      }
+      if(Resource.shouldLogHttp()) {
+        String body = Resource.logResponse(r);
+        return Transmogrifier.mappedJsonResponse(new ByteArrayInputStream(body.getBytes("UTF-8")), c);
+      } else {
+        return Transmogrifier.mappedJsonResponse(r.getInputStream(), c);
+      }
+    } finally {
+      r.close();
     }
   }
 
   protected DownloadResult resolveDownload(Response r) throws IOException {
-    HttpException.checkResponse(r);
-    DownloadResult rv = new DownloadResult();
-    rv.contentType = r.getHeader("Content-Type");
-    rv.contentLength = null;
     try {
-      String l = r.getHeader("Content-Length");
-      if(l != null) {
-        rv.contentLength = Long.parseLong(l);
+      HttpException.checkResponse(r);
+      DownloadResult rv = new DownloadResult(r);
+      rv.contentType = r.getHeader("Content-Type");
+      rv.contentLength = null;
+      try {
+        String l = r.getHeader("Content-Length");
+        if(l != null) {
+          rv.contentLength = Long.parseLong(l);
+        }
+      } catch(NumberFormatException ex) {      
       }
-    } catch(NumberFormatException ex) {      
+      rv.downloadStream = r.getInputStream();
+      return rv;
+    } catch(IOException ex) {
+      r.close();
+      throw ex;
     }
-    rv.downloadStream = r.getInputStream();
-    return rv;    
   }
   
   protected String contentUrl(String u) {
