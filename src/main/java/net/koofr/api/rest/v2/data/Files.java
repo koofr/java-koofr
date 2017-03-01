@@ -3,11 +3,11 @@ package net.koofr.api.rest.v2.data;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import net.koofr.api.http.Request.TransferCallback;
+import net.koofr.api.http.Response;
 import net.koofr.api.json.JsonBase;
 import net.koofr.api.rest.v2.data.Common.StringList;
 
@@ -82,13 +82,20 @@ public class Files implements JsonBase, Serializable {
   }
   
   public static class DownloadResult {
+    private Response r;
+    
     public String contentType;
     public Long contentLength;
     public InputStream downloadStream;
     
+    public DownloadResult(Response r) {
+      this.r = r;
+    }
+    
     public void close() {
       try {
         downloadStream.close();
+        r.close();
       } catch(IOException ex) {
       }
     }

@@ -40,4 +40,8 @@ public class BasicResponse implements Response {
     return cnx.getHeaderField(name);
   }
   
+  public void close() {
+    cnx.disconnect();
+  }
+  
 }
