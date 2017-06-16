@@ -55,15 +55,17 @@ public class RJobs extends Resource {
       return new RJobsFilesCreate(this, "/remove").execute(r);
     }
 
-    public Job copy(List<JobMountPathPair> files) throws IOException, JsonException {
+    public Job copy(List<JobMountPathPair> files, String resolution) throws IOException, JsonException {
       JobCopyFiles r = new JobCopyFiles();
       r.files = files;
+      r.conflictResolution = resolution;
       return new RJobsFilesCreate(this, "/copy").execute(r);
     }
 
-    public Job move(List<JobMountPathPair> files) throws IOException, JsonException {
+    public Job move(List<JobMountPathPair> files, String resolution) throws IOException, JsonException {
       JobMoveFiles r = new JobMoveFiles();
       r.files = files;
+      r.conflictResolution = resolution;
       return new RJobsFilesCreate(this, "/move").execute(r);
     }
     

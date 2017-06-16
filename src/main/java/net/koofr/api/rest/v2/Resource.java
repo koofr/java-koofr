@@ -192,24 +192,28 @@ public class Resource {
         }
         HttpException.checkResponse(r);
       }
-      String contentType = r.getHeader("Content-Type");
-      Map<String, List<String>> headers = r.getHeaders();
-      if(Resource.shouldLogHttp()) {
-        for(String h: headers.keySet()) {
-          log.debug("Header: " + h);
-          for(String v: headers.get(h)) {
-            log.debug("  " + v);
+      if(r.getStatus() != 204) {
+        String contentType = r.getHeader("Content-Type");
+        Map<String, List<String>> headers = r.getHeaders();
+        if(Resource.shouldLogHttp()) {
+          for(String h: headers.keySet()) {
+            log.debug("Header: " + h);
+            for(String v: headers.get(h)) {
+              log.debug("  " + v);
+            }
           }
         }
-      }
-      if(contentType == null || !contentType.startsWith("application/json")) {
-        throw new BadContentTypeException();
-      }
-      if(Resource.shouldLogHttp()) {
-        String body = Resource.logResponse(r);
-        return Transmogrifier.mappedJsonResponse(new ByteArrayInputStream(body.getBytes("UTF-8")), c);
+        if(contentType == null || !contentType.startsWith("application/json")) {
+          throw new BadContentTypeException();
+        }
+        if(Resource.shouldLogHttp()) {
+          String body = Resource.logResponse(r);
+          return Transmogrifier.mappedJsonResponse(new ByteArrayInputStream(body.getBytes("UTF-8")), c);
+        } else {
+          return Transmogrifier.mappedJsonResponse(r.getInputStream(), c);
+        }
       } else {
-        return Transmogrifier.mappedJsonResponse(r.getInputStream(), c);
+        throw HttpException.noContent();
       }
     } finally {
       r.close();

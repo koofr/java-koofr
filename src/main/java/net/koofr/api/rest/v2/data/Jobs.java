@@ -53,7 +53,12 @@ public class Jobs implements JsonBase, Serializable {
   public static class JobCopyMoveFiles extends JobCreate implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    public static final String CONFLICT_RESOLUTION_RENAME  = "RENAME";
+    public static final String CONFLICT_RESOLUTION_SKIP    = "SKIP";
+    public static final String CONFLICT_RESOLUTION_NONE    = null;
+    
     public List<JobMountPathPair> files;
+    public String conflictResolution;
   }
 
   public static class JobCopyFiles extends JobCopyMoveFiles implements Serializable {

@@ -45,6 +45,14 @@ public class HttpException extends IOException {
     }
   }
 
+  public static class NoContent extends HttpException {
+    private static final long serialVersionUID = 1L;
+    
+    protected NoContent() {
+      super(204, "No content");
+    }
+  }
+  
   public static Response checkResponse(Response rs) throws IOException {
     int code = rs.getStatus(); 
     if(code / 100 == 2) {
@@ -72,6 +80,10 @@ public class HttpException extends IOException {
   protected HttpException(int code, String message) {
     super(message);
     this.code = code;
+  }
+  
+  public static NoContent noContent() {
+    return new NoContent();
   }
   
 }
