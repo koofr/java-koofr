@@ -8,46 +8,29 @@ import java.net.URL;
 import net.koofr.api.http.Client;
 import net.koofr.api.http.Request;
 
-public class BasicClient implements Client {
+public class BasicClient extends Client<BasicRequest> {
   
-  private BasicRequest createRequest(String url) throws MalformedURLException, IOException {
+  @Override
+  protected BasicRequest createRequest(String url, Request.Method method)
+      throws MalformedURLException, IOException, IllegalArgumentException {
     URL u = new URL(url);
     BasicRequest r = new BasicRequest((HttpURLConnection)u.openConnection());
+    if(method == Request.Method.GET) {
+      r.cnx.setRequestMethod("GET");
+      r.cnx.setDoInput(true);      
+    } else if(method == Request.Method.PUT) {
+      r.cnx.setRequestMethod("PUT");
+      r.cnx.setDoInput(true);
+      r.cnx.setDoOutput(true);      
+    } else if(method == Request.Method.POST) {
+      r.cnx.setRequestMethod("POST");
+      r.cnx.setDoInput(true);
+      r.cnx.setDoOutput(true);      
+    } else if(method == Request.Method.DELETE) {
+      r.cnx.setRequestMethod("DELETE");
+      r.cnx.setDoInput(true);      
+    }
     r.addHeader("X-Koofr-Version", "2.1");
-    return r;
-  }
-  
-  @Override
-  public Request get(String url) throws MalformedURLException, IOException {
-    BasicRequest r = createRequest(url);
-    r.cnx.setRequestMethod("GET");
-    r.cnx.setDoInput(true);
-    return r;
-  }
-
-  @Override
-  public Request put(String url) throws MalformedURLException, IOException {
-    BasicRequest r = createRequest(url);
-    r.cnx.setRequestMethod("PUT");
-    r.cnx.setDoInput(true);
-    r.cnx.setDoOutput(true);
-    return r;
-  }
-
-  @Override
-  public Request post(String url) throws MalformedURLException, IOException {
-    BasicRequest r = createRequest(url);
-    r.cnx.setRequestMethod("POST");
-    r.cnx.setDoInput(true);
-    r.cnx.setDoOutput(true);
-    return r;
-  }
-
-  @Override
-  public Request delete(String url) throws MalformedURLException, IOException {
-    BasicRequest r = createRequest(url);
-    r.cnx.setRequestMethod("DELETE");
-    r.cnx.setDoInput(true);
     return r;
   }
 
