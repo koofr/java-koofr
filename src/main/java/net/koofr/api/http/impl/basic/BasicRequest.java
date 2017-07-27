@@ -22,6 +22,16 @@ public class BasicRequest implements Request {
   }
 
   @Override
+  public void setConnectTimeout(int t) {
+    cnx.setConnectTimeout(t);
+  }
+  
+  @Override
+  public void setReadTimeout(int t) {
+    cnx.setReadTimeout(t);
+  }
+  
+  @Override
   public void setHeaders(Map<String, String> headers) {
     throw new RuntimeException("Operation not supported.");
   }

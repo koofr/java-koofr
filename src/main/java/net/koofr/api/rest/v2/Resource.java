@@ -28,7 +28,7 @@ public class Resource {
   Authenticator auth;
   Client httpClient;
   String url;
-
+  
   private static Log log = null;
   private static boolean shouldLogHttp() { return log != null; }
   public static void setHttpLog(Log log) { Resource.log = log; }
