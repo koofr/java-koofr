@@ -25,6 +25,10 @@ public class Api extends Resource {
     return new RMounts(this);
   }
   
+  public RShared shared() {
+    return new RShared(this);
+  }
+  
   public RJobs jobs() {
     return new RJobs(this);
   }

@@ -2,7 +2,7 @@ organization := "net.koofr"
 
 name := "java-koofr"
 
-version := "3.2.0"
+version := "3.3.0"
 
 autoScalaLibrary := false
 
@@ -24,19 +24,15 @@ publishArtifact in Test := false
 
 pomExtra :=
   <url>https://github.com/koofr/java-koofr</url>
-    <scm>
-      <url>https://github.com/koofr/java-koofr.git</url>
-    </scm>
-    <developers>
-      <developer>
-        <id>jkmcnk</id>
-        <name>Jaka Mocnik</name>
-      </developer>
-      <developer>
-        <id>edofic</id>
-        <name>Andraz Bajt</name>
-      </developer>
-    </developers>
+  <scm>
+    <url>https://github.com/koofr/java-koofr.git</url>
+  </scm>
+  <developers>
+    <developer>
+      <id>jkmcnk</id>
+      <name>Jaka Mocnik</name>
+    </developer>
+  </developers>
 
 libraryDependencies ++= Seq(
   "com.eclipsesource.minimal-json" % "minimal-json" % "0.9.4"
