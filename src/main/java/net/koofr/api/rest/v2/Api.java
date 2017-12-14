@@ -29,6 +29,10 @@ public class Api extends Resource {
     return new RShared(this);
   }
   
+  public RPlaces places() {
+    return new RPlaces(this);
+  }
+  
   public RJobs jobs() {
     return new RJobs(this);
   }

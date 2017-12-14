@@ -73,7 +73,7 @@ public class Mounts implements JsonBase, Serializable {
     public Long spaceTotal;
     public Long spaceUsed;
     public Integer version;
-    public Boolean isPrimary;
+    public Boolean isPrimary, isDir;
     public Boolean canWrite, canUpload;
     public Boolean overQuota, almostOverQuota;
   }
