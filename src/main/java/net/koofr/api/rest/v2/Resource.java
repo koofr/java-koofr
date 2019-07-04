@@ -29,7 +29,7 @@ public class Resource {
   Client httpClient;
   String url;
   
-  private static Log log = null;
+  protected static Log log = null;
   private static boolean shouldLogHttp() { return log != null; }
   public static void setHttpLog(Log log) { Resource.log = log; }
 
