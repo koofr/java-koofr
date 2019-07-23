@@ -281,14 +281,14 @@ public class RFiles extends Resource {
       params.add("path"); params.add(path);
       params.add("info"); params.add("true");
       if(options != null) {
-        if(options.size != null) {        
-          params.add("overwriteIfSize"); params.add(options.size.toString());
+        if(options.overwriteIfSize != null) {        
+          params.add("overwriteIfSize"); params.add(options.overwriteIfSize.toString());
         }
-        if(options.modified != null) {
-          params.add("overwriteIfModified"); params.add(options.modified.toString());
+        if(options.overwriteIfModified != null) {
+          params.add("overwriteIfModified"); params.add(options.overwriteIfModified.toString());
         }
-        if(options.hash != null) {
-          params.add("overwriteIfHash"); params.add(options.hash);
+        if(options.overwriteIfHash != null) {
+          params.add("overwriteIfHash"); params.add(options.overwriteIfHash);
         }
         if(options.ignoreNonExisting != null) {
           params.add("overwriteIgnoreNonexisting"); params.add(options.ignoreNonExisting.toString());        
@@ -298,6 +298,9 @@ public class RFiles extends Resource {
         }
         if(options.forceOverwrite != null) {
           params.add("overwrite"); params.add(options.forceOverwrite.toString());        
+        }
+        if(options.setModified != null) {
+          params.add("modified"); params.add(options.setModified.toString());
         }
       }      
       String[] p = new String[params.size()];

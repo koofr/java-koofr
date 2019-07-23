@@ -54,12 +54,13 @@ public class Files implements JsonBase, Serializable {
   }
   
   public static class UploadOptions {
-    public Long modified;
-    public Long size;
-    public String hash;
+    public Long overwriteIfModified;
+    public Long overwriteIfSize;
+    public String overwriteIfHash;
     public Boolean ignoreNonExisting;
     public Boolean noRename;
     public Boolean forceOverwrite;
+    public Long setModified;
     public TransferCallback callback;
   }
   
