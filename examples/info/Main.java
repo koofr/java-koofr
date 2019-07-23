@@ -23,6 +23,7 @@ import net.koofr.api.http.Response;
 import net.koofr.api.http.errors.HttpException;
 import net.koofr.api.http.errors.HttpException.*;
 import net.koofr.api.http.impl.basic.BasicClient;
+import net.koofr.api.http.impl.basic.BasicRequest;
 import net.koofr.api.json.JsonException;
 import net.koofr.api.json.Transmogrifier;
 import net.koofr.api.rest.v2.Api;
@@ -261,18 +262,26 @@ public class Main {
       rm.files().delete("/Test/Folder4", null);
       
     }
+
+    */
   
     QueryParameters qp = new QueryParameters();
     qp.query = "IMG";
+    qp.limit = 1024;
     SearchResult sr = api.search().query(qp);
     for(SearchHit h: sr.hits) {
       System.out.println(h.mountId + ":" + h.path);
     }
-    */
   }
   
   public static void main(String[] args) throws Exception {
     Client c = new BasicClient();
+    c.setRequestDecorator(new Client.RequestDecorator<BasicRequest>() {
+      @Override
+      public BasicRequest decorate(BasicRequest r) {
+        return r;
+      }
+    });
     Authenticator a = null;
     if(args.length == 5) {
       a = new OAuth2Authenticator(c, args[1], args[2], args[3], "urn:ietf:wg:oauth:2.0:oob");
@@ -286,5 +295,6 @@ public class Main {
     Api api = new Api("https://" + args[0] + "/api/v2", a, c);
     Self s = api.self().get();
     System.out.println("You are " + s.firstName + " " + s.lastName + " at " + s.email);
+    cover(api);
   }
 }

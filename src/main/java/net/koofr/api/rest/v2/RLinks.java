@@ -7,6 +7,7 @@ import net.koofr.api.json.JsonBase;
 import net.koofr.api.json.JsonException;
 import net.koofr.api.rest.v2.data.Links;
 import net.koofr.api.rest.v2.data.Links.*;
+import net.koofr.api.util.Log;
 
 public class RLinks extends Resource {
   
@@ -57,8 +58,8 @@ public class RLinks extends Resource {
       }
     }
     
-    public void setHash(String hash) throws IOException, JsonException {
-      new RLinkUrlHash(this).set(hash);
+    public Link setHash(String hash) throws IOException, JsonException {
+      return new RLinkUrlHash(this).set(hash);
     }
     
     private static class RLinkPasswordReset extends Resource {
@@ -101,8 +102,12 @@ public class RLinks extends Resource {
       
       public Link set(Date from, Date to) throws IOException, JsonException {
         LinkValidity v = new LinkValidity();
-        v.validFrom = from.getTime();
-        v.validTo = to.getTime();
+        if(null != from) {
+          v.validFrom = from.getTime();
+        }
+        if(null != to) {
+          v.validTo = to.getTime();
+        }
         return putJsonResult(v, Link.class);
       }
     }

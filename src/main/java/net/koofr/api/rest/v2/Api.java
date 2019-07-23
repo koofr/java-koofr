@@ -49,4 +49,12 @@ public class Api extends Resource {
     return new RUsers(this);
   }
   
+  public RLinkList links() {
+    return new RLinkList(this);
+  }
+
+  public RReceiverList receivers() {
+    return new RReceiverList(this);
+  }
+
 }

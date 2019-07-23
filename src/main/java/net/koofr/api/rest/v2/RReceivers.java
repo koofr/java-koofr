@@ -57,8 +57,8 @@ public class RReceivers extends Resource {
       }
     }
     
-    public void setHash(String hash) throws IOException, JsonException {
-      new RReceiverUrlHash(this).set(hash);
+    public Receiver setHash(String hash) throws IOException, JsonException {
+      return new RReceiverUrlHash(this).set(hash);
     }
     
     private static class RReceiverPasswordReset extends Resource {
@@ -101,8 +101,12 @@ public class RReceivers extends Resource {
       
       public Receiver set(Date from, Date to) throws IOException, JsonException {
         ReceiverValidity v = new ReceiverValidity();
-        v.validFrom = from.getTime();
-        v.validTo = to.getTime();
+        if(null != from) {
+          v.validFrom = from.getTime();
+        }
+        if(null != to) {
+          v.validTo = to.getTime();
+        }
         return putJsonResult(v, Receiver.class);
       }
     }
