@@ -276,10 +276,11 @@ public class RFiles extends Resource {
     }
     
     public File put(String path, String name, String contentType, Long contentSize, InputStream content, UploadOptions options) throws IOException, JsonException {
-      MultipartBody body = new MultipartBody(name, contentType, contentSize, content);
+      MultipartBody body = new MultipartBody("dummyfilename", contentType, contentSize, content);
       ArrayList<String> params = new ArrayList<String>();
       params.add("path"); params.add(path);
       params.add("info"); params.add("true");
+      params.add("filename"); params.add(name);
       if(options != null) {
         if(options.overwriteIfSize != null) {        
           params.add("overwriteIfSize"); params.add(options.overwriteIfSize.toString());

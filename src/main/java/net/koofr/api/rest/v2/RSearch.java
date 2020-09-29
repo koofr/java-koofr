@@ -51,10 +51,10 @@ public class RSearch extends Resource {
       if(mountId != null) {
         params.add("mountId");
         params.add(mountId);
-      }
-      if(path != null) {
-        params.add("path");
-        params.add(path);
+        if(path != null) {
+          params.add("path");
+          params.add(path);
+        }
       }
       String[] rv = new String[params.size()];
       params.toArray(rv);
