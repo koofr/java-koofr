@@ -1,6 +1,7 @@
 # Koofr Java SDK
 
-This is a Java SDK for easy interaction with Koofr service. See the `examples` folder for a quick start.
+This is a Java client SDK for the Koofr service API. See the `examples` folder for a quick start.
+
 
 ## A Quick Start
 
@@ -40,19 +41,19 @@ You're welcome, you just need to implement the Client, Request and Response inte
 
 ## Examples
 
-There are two examples demonstrating use of a Koofr client. Run them via SBT. 
+There are two examples demonstrating use of a Koofr client. Run them via Gradle: 
 
-    sbt
-    project info
-    run app.koofr.net myemail@example.com mypassword
+    ./gradlew :examples:info:run app.koofr.net myemail@example.com my_app_password
 
 or
 
-    sbt
-    project cmdline
-    run app.koofr.net myemail@example.com mypassword
+    ./gradlew :examples:cmdline:run app.koofr.net myemail@example.com my_app_password
 
-Hostname is passed in without protocol and without any slashes.
+Note that HTTP Basic authentication on `app.koofr.net` as used by above examples requires you to
+generate a limited-scope *application password* for your Koofr account in our webapp: your main
+password will not work.
+
+The hostname is passed in without protocol and without any slashes.
 
 You can also use OAuth2-based authentication in the examples, by replacing the username and
 password with token URL, client ID, client secret and grant code. However, you need to get
@@ -64,10 +65,17 @@ the grant code before running the examples: perhaps with curl or with
 
 To build jars use
 
-    sbt package
+    ./gradlew build
 
 
-## Maven
+## Using a packaged version
 
-Prebuilt jars are available for maven at [JCenter](https://bintray.com/koofr/maven/java-koofr/view), group ID `net.koofr`, artefact ID `java-koofr`
+Packaged versions since 3.6.0 are available in our Maven repository at
+[https://maven.pkg.github.com/koofr/java-koofr] with group ID `koofr.net` and
+artefact ID `java-koofr`.
 
+Note that there is currently no anonymous read access to GitHub Packages Maven repositories, refer
+to [https://docs.github.com/en/packages/working-with-a-github-packages-registry] for instructions
+on how to enable GitHub Packages Maven repository access.
+
+Older releases are available at [https://bintray.com/koofr/maven/java-koofr/view].

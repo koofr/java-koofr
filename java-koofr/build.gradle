@@ -1,5 +1,6 @@
 plugins {
     id 'java-library'
+    id 'maven-publish'
 }
 
 version = '3.6.0'
@@ -22,4 +23,24 @@ repositories {
 
 dependencies {
     implementation 'com.eclipsesource.minimal-json:minimal-json:0.9.4'
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/koofr/java-koofr")
+            credentials {
+                username = rootProject.findProperty("gpr.user") ?: System.getenv("GPR_USER")
+                password = rootProject.findProperty("gpr.key") ?: System.getenv("GPR_KEY")
+            }
+        }
+    }
+    publications {
+        gpr(MavenPublication) {
+            groupId = 'net.koofr'
+
+            from(components.java)
+        }
+    }
 }
