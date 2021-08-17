@@ -1,0 +1,2 @@
+rootProject.name = 'java-koofr'
+include(':java-koofr', ':examples:cmdline', ':examples:info')

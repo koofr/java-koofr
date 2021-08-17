@@ -1,8 +1,9 @@
-target
-/.idea*
-.classpath
-.project
-examples/cmdline/.classpath
-examples/cmdline/.project
-examples/info/.classpath
-examples/info/.project
+.idea
+
+local.properties
+
+# Ignore Gradle project-specific cache directory
+.gradle
+
+# Ignore Gradle build output directory
+build

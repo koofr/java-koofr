@@ -1,0 +1,25 @@
+plugins {
+    id 'java-library'
+}
+
+version = '3.6.0'
+
+tasks.named('jar') {
+    manifest {
+        attributes('Implementation-Title': project.name,
+                   'Implementation-Version': project.version)
+    }
+}
+
+compileJava {
+    sourceCompatibility = 1.6
+    targetCompatibility = 1.6
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.eclipsesource.minimal-json:minimal-json:0.9.4'
+}

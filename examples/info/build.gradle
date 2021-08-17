@@ -1,0 +1,15 @@
+plugins {
+    id 'application' 
+}
+
+repositories {
+    mavenCentral() 
+}
+
+dependencies {
+    implementation project(':java-koofr') 
+}
+
+application {
+    mainClass = 'info.Main' 
+}
