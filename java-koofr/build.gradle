@@ -25,22 +25,47 @@ dependencies {
     implementation 'com.eclipsesource.minimal-json:minimal-json:0.9.4'
 }
 
+Properties local = new Properties()
+local.load(project.rootProject.file("local.properties").newDataInputStream())
+
 publishing {
     repositories {
         maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/koofr/java-koofr")
+            name = 'koofr'
+            url = local.getProperty('repo.url')
             credentials {
-                username = rootProject.findProperty("gpr.user") ?: System.getenv("GPR_USER")
-                password = rootProject.findProperty("gpr.key") ?: System.getenv("GPR_KEY")
+                username = local.getProperty('repo.user')
+                password = local.getProperty('repo.key')
             }
         }
     }
     publications {
-        gpr(MavenPublication) {
+        koofr(MavenPublication) {
             groupId = 'net.koofr'
-
             from(components.java)
+            pom {
+                name = 'java-koofr'
+                description = 'A Java client for Koofr storage service API'
+                url = 'https://github.com/koofr/java-koofr'
+                licenses {
+                    license {
+                        name = 'The MIT License'
+                        url = 'https://github.com/koofr/java-koofr/blob/master/LICENSE'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'jkmcnk'
+                        name = 'Jaka Močnik'
+                        email = 'jaka@koofr.net'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:https://github.com/koofr/java-koofr.git'
+                    developerConnection = 'scm:git:https://github.com/koofr/java-koofr.git'
+                    url = 'https://github.com/koofr/java-koofr'
+                }
+            }
         }
     }
 }
