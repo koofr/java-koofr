@@ -71,7 +71,7 @@ To build jars use
 ## Using a packaged version
 
 Packaged versions are available in our Maven repository at
-https://maven.pkg.github.com/koofr/java-koofr with group ID `koofr.net` and
+https://repo.koofr.eu/maven with group ID `koofr.net` and
 artefact ID `java-koofr`.
 
 For Gradle, you will want to use the following repository:
@@ -79,11 +79,7 @@ For Gradle, you will want to use the following repository:
 ```
 repositories {
     maven {
-        url = uri("https://maven.pkg.github.com/koofr/java-koofr")
-        credentials {
-            username = project.findProperty("gpr.user") ?: System.getenv("GPR_USER")
-            password = project.findProperty("gpr.key") ?: System.getenv("GPR_KEY")
-        }
+        url = uri("https://repo.koofr.eu/maven")
     }
 }
 ```
@@ -95,8 +91,3 @@ dependencies {
     implementation 'net.koofr:java-koofr:3.6.0'
 }
 ```
-
-Note that there is currently no anonymous read access to GitHub Packages Maven repositories, refer
-to https://docs.github.com/en/packages/working-with-a-github-packages-registry for instructions
-on how to enable GitHub Packages Maven repository access. (*tldr*, you need to generate a personal
-access token for your GitHub account and put it in the GPR_KEY env variable)

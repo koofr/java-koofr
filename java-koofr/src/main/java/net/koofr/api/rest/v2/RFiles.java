@@ -114,13 +114,17 @@ public class RFiles extends Resource {
   public void createFolder(String path, String name) throws IOException, JsonException {
     new RFilesFolder(this).create(path, name);
   }
-  
+
+  public static class DeleteResult implements JsonBase {
+    public String version;
+  }
+
   private static class RFilesRemove extends Resource {
     public RFilesRemove(RFiles parent) {
       super(parent, "/remove");
     }
     
-    public void delete(String path, DeleteOptions options) throws IOException, JsonException  {
+    public DeleteResult delete(String path, DeleteOptions options) throws IOException, JsonException  {
       ArrayList<String> params = new ArrayList<String>();
       params.add("path"); params.add(path);
       if(options != null) {
@@ -139,12 +143,12 @@ public class RFiles extends Resource {
       }
       String[] p = new String[params.size()];
       params.toArray(p);
-      deleteNoResult(p);
+      return deleteResult(DeleteResult.class, p);
     }
   }
-  
-  public void delete(String path, DeleteOptions options) throws IOException, JsonException {
-    new RFilesRemove(this).delete(path, options);
+
+  public DeleteResult delete(String path, DeleteOptions options) throws IOException, JsonException {
+    return new RFilesRemove(this).delete(path, options);
   }
   
   public static class FilesRename implements JsonBase {
