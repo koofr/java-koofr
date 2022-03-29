@@ -1,9 +1,5 @@
 package net.koofr.api.auth.oauth2;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Date;
-
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonObject;
 
@@ -12,7 +8,11 @@ import net.koofr.api.http.Client;
 import net.koofr.api.http.Request;
 import net.koofr.api.http.Response;
 import net.koofr.api.http.content.UrlEncodedBody;
-import net.koofr.api.http.errors.HttpException;
+import net.koofr.api.rest.v2.Resource;
+
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Date;
 
 public class OAuth2Authenticator implements Authenticator {
 
@@ -35,7 +35,7 @@ public class OAuth2Authenticator implements Authenticator {
   }
   
   private void parseTokenResponse(Response rs) throws IOException {
-    HttpException.checkResponse(rs);
+    Resource.checkResponse(rs);
     JsonObject o = Json.parse(new InputStreamReader(rs.getInputStream(), "UTF-8")).asObject();
     try {
       String r = o.getString("refresh_token", null);

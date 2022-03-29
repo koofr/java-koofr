@@ -3,8 +3,6 @@ package net.koofr.api.http;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
-import net.koofr.api.http.impl.basic.BasicRequest;
-
 public abstract class Client<R extends Request> {
 
   abstract protected R createRequest(String url, Request.Method method)

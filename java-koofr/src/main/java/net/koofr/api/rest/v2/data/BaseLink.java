@@ -1,6 +1,7 @@
 package net.koofr.api.rest.v2.data;
 
 import net.koofr.api.json.JsonBase;
+
 import java.io.Serializable;
 
 public class BaseLink implements JsonBase, Serializable {

@@ -1,5 +1,14 @@
 package net.koofr.api.json;
 
+import com.eclipsesource.json.Json;
+import com.eclipsesource.json.JsonArray;
+import com.eclipsesource.json.JsonObject;
+import com.eclipsesource.json.JsonObject.Member;
+import com.eclipsesource.json.JsonValue;
+
+import net.koofr.api.util.Log;
+import net.koofr.api.util.StdLog;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -14,15 +23,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import net.koofr.api.util.Log;
-import net.koofr.api.util.StdLog;
-
-import com.eclipsesource.json.Json;
-import com.eclipsesource.json.JsonArray;
-import com.eclipsesource.json.JsonObject;
-import com.eclipsesource.json.JsonObject.Member;
-import com.eclipsesource.json.JsonValue;
 
 public class Transmogrifier {
   
@@ -103,7 +103,7 @@ public class Transmogrifier {
       System.out.print(o);
     }    
   }
-  
+
   @SuppressWarnings("rawtypes")
   protected static JsonValue mapObjectUnsafe(Object o) throws JsonException, IllegalAccessException {
     if(o == null) {

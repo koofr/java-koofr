@@ -1,13 +1,13 @@
 package net.koofr.api.http.impl.basic;
 
+import net.koofr.api.http.Response;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
-
-import net.koofr.api.http.Response;
 
 public class BasicResponse implements Response {
 
@@ -29,6 +29,16 @@ public class BasicResponse implements Response {
       return new GZIPInputStream(cnx.getInputStream());
     } else {
       return cnx.getInputStream();
+    }
+  }
+
+  @Override
+  public InputStream getErrorStream() throws IOException {
+    String ce = cnx.getHeaderField("Content-Encoding");
+    if("gzip".equals(ce)) {
+      return new GZIPInputStream(cnx.getInputStream());
+    } else {
+      return cnx.getErrorStream();
     }
   }
 

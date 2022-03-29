@@ -1,14 +1,5 @@
 package net.koofr.api.rest.v2;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
 import net.koofr.api.auth.Authenticator;
 import net.koofr.api.http.Body;
 import net.koofr.api.http.Client;
@@ -20,8 +11,18 @@ import net.koofr.api.http.errors.BadContentTypeException;
 import net.koofr.api.http.errors.HttpException;
 import net.koofr.api.json.JsonException;
 import net.koofr.api.json.Transmogrifier;
+import net.koofr.api.rest.v2.data.Error;
 import net.koofr.api.rest.v2.data.Files.DownloadResult;
 import net.koofr.api.util.Log;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class Resource {
 
@@ -170,14 +171,42 @@ public class Resource {
   protected void postJsonNoResult(String... params) throws JsonException, IOException {
     resolveNoResult(httpPost(params));
   }
-  
+
+  public static Response checkResponse(Response rs) throws IOException {
+    int code = rs.getStatus();
+    if(code / 100 == 2) {
+      return rs;
+    }
+    Error error = null;
+    try {
+      if(shouldLogHttp()) {
+        String body = Resource.logResponse(rs);
+        error = Transmogrifier.mappedJsonResponse(new ByteArrayInputStream(body.getBytes("UTF-8")), Error.class);
+      } else {
+        error = Transmogrifier.mappedJsonResponse(rs.getErrorStream(), Error.class);
+      }
+    } catch(Exception ex) {
+    }
+    switch(code) {
+      case 404:
+        throw new HttpException.NotFound(error);
+      case 401:
+        throw new HttpException.Unauthorized(error);
+      case 403:
+        throw new HttpException.Forbidden(error);
+      case 409:
+        throw new HttpException.Conflict(error);
+      default:
+        throw new HttpException(error, code);
+    }
+  }
+
+
   protected void resolveNoResult(Response r) throws IOException {
     try {
+      Resource.checkResponse(r);
       if(Resource.shouldLogHttp()) {
         Resource.logResponse(r);
-        HttpException.checkResponse(r);
-      } else {
-        HttpException.checkResponse(r);
       }
     } finally {
       r.close();
@@ -187,10 +216,7 @@ public class Resource {
   protected <T> T resolveJsonResult(Response r, Class<T> c) throws JsonException, IOException {
     try {
       if(r.getStatus()/100 != 2) {
-        if(Resource.shouldLogHttp()) {
-          Resource.logResponse(r);
-        }
-        HttpException.checkResponse(r);
+        Resource.checkResponse(r);
       }
       if(r.getStatus() != 204) {
         String contentType = r.getHeader("Content-Type");
@@ -222,7 +248,7 @@ public class Resource {
 
   protected DownloadResult resolveDownload(Response r) throws IOException {
     try {
-      HttpException.checkResponse(r);
+      Resource.checkResponse(r);
       DownloadResult rv = new DownloadResult(r);
       rv.contentType = r.getHeader("Content-Type");
       rv.contentLength = null;
@@ -240,17 +266,23 @@ public class Resource {
       throw ex;
     }
   }
-  
+
   protected String contentUrl(String u) {
     return u.replaceFirst("/api/v2/", "/content/api/v2/");
   }
   
   private static String logResponse(Response r) {
     try {
-      Resource.log.debug("Response status code: " + r.getStatus());
+      int status = r.getStatus();
+      Resource.log.debug("Response status code: " + status);
       StringBuilder b = new StringBuilder();
       byte[] buf = new byte[1024];
-      InputStream i = r.getInputStream();
+      InputStream i;
+      if(status/100 == 2) {
+        i = r.getInputStream();
+      } else {
+        i = r.getErrorStream();
+      }
       int n;
       while((n = i.read(buf)) >= 0) {
         byte[] buf2 = Arrays.copyOf(buf, n);

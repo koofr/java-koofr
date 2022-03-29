@@ -1,10 +1,10 @@
 package net.koofr.api.rest.v2.data;
 
+import net.koofr.api.json.JsonBase;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
-
-import net.koofr.api.json.JsonBase;
 
 public class Jobs implements JsonBase, Serializable {
   private static final long serialVersionUID = 1L;

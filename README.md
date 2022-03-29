@@ -43,15 +43,15 @@ You're welcome, you just need to implement the Client, Request and Response inte
 
 There are two examples demonstrating use of a Koofr client. Run them via Gradle: 
 
-    ./gradlew :examples:info:run app.koofr.net myemail@example.com my_app_password
+    ./gradlew :examples:info:run --args='app.koofr.net myemail@example.com my_app_password'
 
 or
 
-    ./gradlew :examples:cmdline:run app.koofr.net myemail@example.com my_app_password
+    ./gradlew :examples:cmdline:run --args='app.koofr.net myemail@example.com my_app_password'
 
 Note that HTTP Basic authentication on `app.koofr.net` as used by above examples requires you to
-generate a limited-scope *application password* for your Koofr account in our webapp: your main
-password will not work.
+generate a limited-scope *application password* for your Koofr account in our webapp, at
+https://app.koofr.net/app/admin/preferences/password
 
 The hostname is passed in without protocol and without any slashes.
 

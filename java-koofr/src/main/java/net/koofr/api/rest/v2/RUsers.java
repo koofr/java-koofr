@@ -1,8 +1,8 @@
 package net.koofr.api.rest.v2;
 
-import java.io.IOException;
-
 import net.koofr.api.rest.v2.data.Files.DownloadResult;
+
+import java.io.IOException;
 
 public class RUsers extends Resource {
 

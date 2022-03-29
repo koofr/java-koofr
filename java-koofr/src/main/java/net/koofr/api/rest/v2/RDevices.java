@@ -1,11 +1,11 @@
 package net.koofr.api.rest.v2;
 
-import java.io.IOException;
-
 import net.koofr.api.json.JsonBase;
 import net.koofr.api.json.JsonException;
 import net.koofr.api.rest.v2.data.Devices;
-import net.koofr.api.rest.v2.data.Devices.*;
+import net.koofr.api.rest.v2.data.Devices.Device;
+
+import java.io.IOException;
 
 public class RDevices extends Resource {
   

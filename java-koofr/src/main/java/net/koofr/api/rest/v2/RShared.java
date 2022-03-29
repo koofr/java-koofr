@@ -1,9 +1,9 @@
 package net.koofr.api.rest.v2;
 
-import java.io.IOException;
-
 import net.koofr.api.json.JsonException;
 import net.koofr.api.rest.v2.data.Shared;
+
+import java.io.IOException;
 
 public class RShared extends Resource {
 

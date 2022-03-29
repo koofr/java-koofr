@@ -1,13 +1,14 @@
 package net.koofr.api.rest.v2;
 
-import java.io.IOException;
-
 import net.koofr.api.json.JsonBase;
 import net.koofr.api.json.JsonException;
 import net.koofr.api.rest.v2.data.Bundle;
 import net.koofr.api.rest.v2.data.Mounts;
+import net.koofr.api.rest.v2.data.Mounts.Mount;
+import net.koofr.api.rest.v2.data.Mounts.MountUser;
 import net.koofr.api.rest.v2.data.Permissions;
-import net.koofr.api.rest.v2.data.Mounts.*;
+
+import java.io.IOException;
 
 public class RMounts extends Resource {
 

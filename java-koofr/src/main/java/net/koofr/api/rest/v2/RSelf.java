@@ -1,17 +1,17 @@
 package net.koofr.api.rest.v2;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map;
-
 import net.koofr.api.http.content.MultipartBody;
 import net.koofr.api.json.JsonBase;
 import net.koofr.api.json.JsonException;
 import net.koofr.api.rest.v2.data.Bookmarks;
+import net.koofr.api.rest.v2.data.Bookmarks.Bookmark;
 import net.koofr.api.rest.v2.data.ConnectionList;
 import net.koofr.api.rest.v2.data.Files.DownloadResult;
 import net.koofr.api.rest.v2.data.Self;
-import net.koofr.api.rest.v2.data.Bookmarks.Bookmark;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
 
 public class RSelf extends Resource {
 

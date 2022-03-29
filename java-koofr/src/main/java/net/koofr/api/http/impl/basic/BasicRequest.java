@@ -1,15 +1,15 @@
 package net.koofr.api.http.impl.basic;
 
+import net.koofr.api.http.Body;
+import net.koofr.api.http.Request;
+import net.koofr.api.http.Response;
+import net.koofr.api.http.errors.CancelledException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.util.Map;
-
-import net.koofr.api.http.Body;
-import net.koofr.api.http.Request;
-import net.koofr.api.http.Response;
-import net.koofr.api.http.errors.CancelledException;
 
 public class BasicRequest implements Request {
 

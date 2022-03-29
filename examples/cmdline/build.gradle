@@ -13,3 +13,7 @@ dependencies {
 application {
     mainClass = 'cmdline.Main' 
 }
+
+run {
+    standardInput = System.in
+}

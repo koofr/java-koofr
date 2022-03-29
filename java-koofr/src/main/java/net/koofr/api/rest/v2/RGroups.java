@@ -1,13 +1,13 @@
 package net.koofr.api.rest.v2;
 
-import java.io.IOException;
-import java.util.Map;
-
 import net.koofr.api.json.JsonBase;
 import net.koofr.api.json.JsonException;
 import net.koofr.api.rest.v2.data.Groups;
 import net.koofr.api.rest.v2.data.Groups.GroupBranding;
 import net.koofr.api.rest.v2.data.Permissions;
+
+import java.io.IOException;
+import java.util.Map;
 
 public class RGroups extends Resource {
   

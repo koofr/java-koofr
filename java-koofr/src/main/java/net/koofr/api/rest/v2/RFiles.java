@@ -1,18 +1,23 @@
 package net.koofr.api.rest.v2;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import net.koofr.api.http.Response;
 import net.koofr.api.http.content.MultipartBody;
 import net.koofr.api.json.JsonBase;
 import net.koofr.api.json.JsonException;
 import net.koofr.api.rest.v2.RMounts.RMount;
 import net.koofr.api.rest.v2.data.Files;
-import net.koofr.api.rest.v2.data.Files.*;
+import net.koofr.api.rest.v2.data.Files.DeleteOptions;
+import net.koofr.api.rest.v2.data.Files.DownloadOptions;
+import net.koofr.api.rest.v2.data.Files.DownloadResult;
+import net.koofr.api.rest.v2.data.Files.File;
+import net.koofr.api.rest.v2.data.Files.UploadOptions;
+import net.koofr.api.rest.v2.data.Files.Versions;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class RFiles extends Resource {
 

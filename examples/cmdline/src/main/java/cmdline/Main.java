@@ -1,39 +1,38 @@
 package cmdline;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.lang.Override;
-import java.lang.StringBuilder;
-import java.lang.System;
-import java.nio.file.FileSystems;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.List;
-
 import net.koofr.api.auth.Authenticator;
 import net.koofr.api.auth.basic.HttpBasicAuthenticator;
 import net.koofr.api.auth.oauth2.OAuth2Authenticator;
 import net.koofr.api.http.Client;
 import net.koofr.api.http.Request.TransferCallback;
+import net.koofr.api.http.errors.HttpException;
 import net.koofr.api.http.impl.basic.BasicClient;
 import net.koofr.api.json.JsonException;
-import net.koofr.api.json.Transmogrifier;
 import net.koofr.api.rest.v2.Api;
 import net.koofr.api.rest.v2.RSearch.QueryParameters;
 import net.koofr.api.rest.v2.Resource;
+import net.koofr.api.rest.v2.data.Error;
 import net.koofr.api.rest.v2.data.Files;
 import net.koofr.api.rest.v2.data.Files.DownloadResult;
 import net.koofr.api.rest.v2.data.Files.File;
 import net.koofr.api.rest.v2.data.Files.UploadOptions;
+import net.koofr.api.rest.v2.data.Links;
 import net.koofr.api.rest.v2.data.Mounts;
 import net.koofr.api.rest.v2.data.Mounts.Mount;
 import net.koofr.api.rest.v2.data.SearchResult;
 import net.koofr.api.rest.v2.data.SearchResult.SearchHit;
 import net.koofr.api.util.StdLog;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.util.Date;
+import java.util.Map;
+import java.util.Scanner;
+
 public class Main {
   public static void main(String[] args) throws Exception {
+    Resource.setHttpLog(new StdLog());
     Client c = new BasicClient();
     Authenticator a = null;
     if(args.length == 5) {
@@ -164,16 +163,25 @@ class Example implements Runnable {
     for(SearchHit hit: result.hits) {
       System.out.println(hit.mountId + ":" + hit.path);
     }
-    System.out.println("\n");    
+    System.out.println("\n");
   }
-  
+
   private void attributes() throws IOException, JsonException {
     Map<String, Object> attributes = api.self().attributes().get();
     for(Object key: attributes.keySet()) {
       System.out.println(key + ": " + attributes.get(key));
     }
   }
-  
+
+  private void link() throws IOException, JsonException {
+    String path = sc.nextLine().trim();
+    Links.Link l = api.mounts().mount(mountId).links().create(this.path + "/" + path);
+    Date nao = new Date();
+    Date from = new Date(nao.getTime() - 1000L);
+    Date to = new Date(nao.getTime() + 30*24*60*60*1000L);
+    api.mounts().mount(mountId).links().link(l.id).setValidity(from, to);
+  }
+
   public void run() {
     System.out.println("First pick a mount. Use 'help' for help.");
     while(true) {
@@ -203,6 +211,9 @@ class Example implements Runnable {
         case "rm":
           rm();
           break;
+        case "link":
+          link();
+          break;
         case "download":
           download();
           break;
@@ -218,8 +229,11 @@ class Example implements Runnable {
         default:
           printHelp();
         }
-      } catch (Exception e) {
-        System.out.println("error:" + e);
+      } catch(HttpException e) {
+        Error error = e.getError();
+        System.out.println("Error status " + e.getCode() + " error " + error);
+      } catch(Exception e) {
+        System.out.println("Error: " + e);
         e.printStackTrace(System.out);
       }
     }

@@ -1,12 +1,12 @@
 package net.koofr.api.rest.v2;
 
-import java.io.IOException;
-import java.util.Date;
-
 import net.koofr.api.json.JsonBase;
 import net.koofr.api.json.JsonException;
 import net.koofr.api.rest.v2.data.Receivers;
-import net.koofr.api.rest.v2.data.Receivers.*;
+import net.koofr.api.rest.v2.data.Receivers.Receiver;
+
+import java.io.IOException;
+import java.util.Date;
 
 public class RReceivers extends Resource {
   

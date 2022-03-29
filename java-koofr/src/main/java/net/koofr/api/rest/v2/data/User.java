@@ -1,8 +1,8 @@
 package net.koofr.api.rest.v2.data;
 
-import java.io.Serializable;
-
 import net.koofr.api.json.JsonBase;
+
+import java.io.Serializable;
 
 public class User implements JsonBase, Serializable {
   private static final long serialVersionUID = 1L;

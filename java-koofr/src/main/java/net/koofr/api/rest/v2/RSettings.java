@@ -1,9 +1,13 @@
 package net.koofr.api.rest.v2;
 
-import java.io.IOException;
-
 import net.koofr.api.json.JsonException;
-import net.koofr.api.rest.v2.data.Settings.*;
+import net.koofr.api.rest.v2.data.Settings.Branding;
+import net.koofr.api.rest.v2.data.Settings.Language;
+import net.koofr.api.rest.v2.data.Settings.Notifications;
+import net.koofr.api.rest.v2.data.Settings.Security;
+import net.koofr.api.rest.v2.data.Settings.Seen;
+
+import java.io.IOException;
 
 public class RSettings extends Resource {
 

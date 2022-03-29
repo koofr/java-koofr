@@ -1,12 +1,12 @@
 package net.koofr.api.rest.v2.data;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-
 import net.koofr.api.json.JsonBase;
 import net.koofr.api.rest.v2.data.Common.StringList;
 import net.koofr.api.rest.v2.data.Mounts.Mount;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 public class Trash implements JsonBase, Serializable {
   private static final long serialVersionUID = 1L;

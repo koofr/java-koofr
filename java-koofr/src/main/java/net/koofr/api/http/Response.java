@@ -11,6 +11,7 @@ public interface Response {
   Map<String, List<String>> getHeaders();
   String getHeader(String name);
   InputStream getInputStream() throws IOException;
+  InputStream getErrorStream() throws IOException;
   void close();
 
 }

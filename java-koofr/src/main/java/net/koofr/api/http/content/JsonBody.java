@@ -1,8 +1,8 @@
 package net.koofr.api.http.content;
 
-import java.io.UnsupportedEncodingException;
-
 import com.eclipsesource.json.JsonValue;
+
+import java.io.UnsupportedEncodingException;
 
 public class JsonBody extends StringBody {
   

@@ -1,8 +1,8 @@
 package net.koofr.api.rest.v2.data;
 
-import java.io.Serializable;
-
 import net.koofr.api.json.JsonBase;
+
+import java.io.Serializable;
 
 public class Settings {
 

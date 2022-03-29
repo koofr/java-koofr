@@ -1,13 +1,12 @@
 package net.koofr.api.rest.v2;
 
-import java.io.IOException;
-import java.util.Date;
-
 import net.koofr.api.json.JsonBase;
 import net.koofr.api.json.JsonException;
 import net.koofr.api.rest.v2.data.Links;
-import net.koofr.api.rest.v2.data.Links.*;
-import net.koofr.api.util.Log;
+import net.koofr.api.rest.v2.data.Links.Link;
+
+import java.io.IOException;
+import java.util.Date;
 
 public class RLinks extends Resource {
   

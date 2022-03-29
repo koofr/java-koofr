@@ -1,12 +1,12 @@
 package net.koofr.api.rest.v2;
 
-import java.io.IOException;
-
 import net.koofr.api.json.JsonBase;
 import net.koofr.api.json.JsonException;
 import net.koofr.api.rest.v2.RMounts.RMount;
 import net.koofr.api.rest.v2.data.Comments;
-import net.koofr.api.rest.v2.data.Comments.*;
+import net.koofr.api.rest.v2.data.Comments.Comment;
+
+import java.io.IOException;
 
 public class RComments extends Resource {
 

@@ -1,12 +1,12 @@
 package net.koofr.api.http.impl.basic;
 
+import net.koofr.api.http.Client;
+import net.koofr.api.http.Request;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import net.koofr.api.http.Client;
-import net.koofr.api.http.Request;
 
 public class BasicClient extends Client<BasicRequest> {
   

@@ -1,9 +1,9 @@
 package net.koofr.api.rest.v2.data;
 
+import net.koofr.api.json.JsonBase;
+
 import java.io.Serializable;
 import java.util.List;
-
-import net.koofr.api.json.JsonBase;
 
 public class Groups implements JsonBase, Serializable {
   private static final long serialVersionUID = 1L;

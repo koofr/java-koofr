@@ -1,14 +1,14 @@
 package net.koofr.api.rest.v2.data;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-
 import net.koofr.api.json.JsonBase;
 import net.koofr.api.rest.v2.data.Common.StringList;
 import net.koofr.api.rest.v2.data.Links.Link;
 import net.koofr.api.rest.v2.data.Mounts.Mount;
 import net.koofr.api.rest.v2.data.Receivers.Receiver;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 public class SearchResult implements JsonBase, Serializable {
   private static final long serialVersionUID = 1L;

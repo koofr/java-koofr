@@ -1,8 +1,8 @@
 package net.koofr.api.auth;
 
-import java.io.IOException;
-
 import net.koofr.api.http.Request;
+
+import java.io.IOException;
 
 public interface Authenticator {
 

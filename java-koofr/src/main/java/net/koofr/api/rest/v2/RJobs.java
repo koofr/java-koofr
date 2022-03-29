@@ -1,11 +1,17 @@
 package net.koofr.api.rest.v2;
 
-import java.io.IOException;
-import java.util.List;
-
 import net.koofr.api.json.JsonException;
 import net.koofr.api.rest.v2.data.Jobs;
-import net.koofr.api.rest.v2.data.Jobs.*;
+import net.koofr.api.rest.v2.data.Jobs.Job;
+import net.koofr.api.rest.v2.data.Jobs.JobCopyFiles;
+import net.koofr.api.rest.v2.data.Jobs.JobCreate;
+import net.koofr.api.rest.v2.data.Jobs.JobMountPath;
+import net.koofr.api.rest.v2.data.Jobs.JobMountPathPair;
+import net.koofr.api.rest.v2.data.Jobs.JobMoveFiles;
+import net.koofr.api.rest.v2.data.Jobs.JobRemoveFiles;
+
+import java.io.IOException;
+import java.util.List;
 
 public class RJobs extends Resource {
   public RJobs(Api parent) {
