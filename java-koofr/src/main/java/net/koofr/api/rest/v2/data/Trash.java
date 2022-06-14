@@ -26,4 +26,5 @@ public class Trash implements JsonBase, Serializable {
   
   public List<TrashFile> files;
   public Map<String, Mount> mounts;
+  public Long retentionDays;
 }
