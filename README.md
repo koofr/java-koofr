@@ -29,13 +29,13 @@ public class Main {
 Obviously, you need an HTTP Client and an Authenticator to use the Api. 
 
 The SDK provides an abstraction for both. You probably won't need to implement your
-own authenticator since the ones supplied in net.kofr.api.auth subpackages cover all
+own authenticator since the ones supplied in `net.koofr.api.auth` subpackages cover all
 possible authentication options you have with Koofr: OAuth2, HTTP Basic and our own
 authentication token scheme.
 
 You might want to implement your own HTTP client on the other hand: we provide a simple one
-based on the HttpURLConnection class from the Java runtime, but you might want to use an
-Apache HttpComponents based one or whatever the preferred option on your platform is.
+based on the `HttpURLConnection` class from the Java runtime, but you might want to use an
+Apache `HttpComponents` based one or whatever the preferred option on your platform is.
 You're welcome, you just need to implement the Client, Request and Response interfaces.
 
 
