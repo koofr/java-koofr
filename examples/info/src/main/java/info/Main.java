@@ -12,7 +12,7 @@ import net.koofr.api.rest.v2.data.Self;
 public class Main {
 
   public static void main(String[] args) throws Exception {
-    Client c = new BasicClient();
+    Client<BasicRequest> c = new BasicClient();
     c.setRequestDecorator(new Client.RequestDecorator<BasicRequest>() {
       @Override
       public BasicRequest decorate(BasicRequest r) {

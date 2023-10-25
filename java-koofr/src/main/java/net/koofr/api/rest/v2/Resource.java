@@ -27,14 +27,14 @@ import java.util.Map;
 public class Resource {
 
   Authenticator auth;
-  Client httpClient;
+  Client<?> httpClient;
   String url;
   
   protected static Log log = null;
   private static boolean shouldLogHttp() { return log != null; }
   public static void setHttpLog(Log log) { Resource.log = log; }
 
-  public Resource(Authenticator auth, Client httpClient, String url) {
+  public Resource(Authenticator auth, Client<?> httpClient, String url) {
     this.auth = auth;
     this.httpClient = httpClient;
     this.url = url;

@@ -5,7 +5,7 @@ import net.koofr.api.http.Client;
 
 public class Api extends Resource {
   
-  public Api(String baseUrl, Authenticator auth, Client client) {
+  public Api(String baseUrl, Authenticator auth, Client<?> client) {
     super(auth, client, baseUrl);
   }
   

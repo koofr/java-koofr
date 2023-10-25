@@ -26,8 +26,8 @@ public class ByteArrayBody implements Body {
   }
 
   @Override
-  public Long getContentLength() {
-    return new Long(content.length);
+  public Long getContentLength() {    
+    return Long.valueOf(content.length);
   }
 
   @Override

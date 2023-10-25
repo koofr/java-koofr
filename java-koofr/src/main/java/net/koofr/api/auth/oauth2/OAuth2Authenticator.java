@@ -16,7 +16,7 @@ import java.util.Date;
 
 public class OAuth2Authenticator implements Authenticator {
 
-  Client httpClient;
+  Client<?> httpClient;
   String tokenUrl, clientId, clientSecret, redirectUri;
   
   String refreshToken;
@@ -25,7 +25,7 @@ public class OAuth2Authenticator implements Authenticator {
   
   private static final int EXPIRATION_GUARD = 60*1000;
   
-  public OAuth2Authenticator(Client httpClient, String tokenUrl,
+  public OAuth2Authenticator(Client<?> httpClient, String tokenUrl,
       String clientId, String clientSecret, String redirectUri) {
     this.httpClient = httpClient;
     this.tokenUrl = tokenUrl;

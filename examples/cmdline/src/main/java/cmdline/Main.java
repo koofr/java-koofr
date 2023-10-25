@@ -33,7 +33,7 @@ import java.util.Scanner;
 public class Main {
   public static void main(String[] args) throws Exception {
     Resource.setHttpLog(new StdLog());
-    Client c = new BasicClient();
+    Client<?> c = new BasicClient();
     Authenticator a = null;
     if(args.length == 5) {
       a = new OAuth2Authenticator(c, args[1], args[2], args[3], "urn:ietf:wg:oauth:2.0:oob");
@@ -143,7 +143,7 @@ class Example implements Runnable {
       System.out.println("\n");
   }
 
-  private void upload() throws IOException, JsonException {
+  private File upload() throws IOException, JsonException {
       String localPath = sc.nextLine().trim();
       UploadOptions options = new UploadOptions();
       options.forceOverwrite = true;
@@ -152,7 +152,7 @@ class Example implements Runnable {
       String name = parts[parts.length - 1];
       java.io.File fl = new java.io.File(localPath);
       FileInputStream is = new FileInputStream(fl);
-      File ul = api.mounts().mount(this.mountId).files().upload(this.path, name, "application/octet-stream", fl.length(), is, options);
+      return api.mounts().mount(this.mountId).files().upload(this.path, name, "application/octet-stream", fl.length(), is, options);
   }
 
   private void search() throws IOException, JsonException {

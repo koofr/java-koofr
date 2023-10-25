@@ -327,6 +327,4 @@ public class RFiles extends Resource {
   public File upload(String path, String name, String contentType, Long contentSize, InputStream content, UploadOptions options) throws IOException, JsonException {
     return new RFilesContent(this, "/put").put(path, name, contentType, contentSize, content, options);
   }
-  
-  /* TODO: template creation, link local, discover local */
 }
