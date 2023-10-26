@@ -28,6 +28,7 @@ public class SearchResult implements JsonBase, Serializable {
     public Mount mount;
     public Link link;
     public Receiver receiver;
+    public VaultRepo vaultRepo;
   }
   
   public List<SearchHit> hits;

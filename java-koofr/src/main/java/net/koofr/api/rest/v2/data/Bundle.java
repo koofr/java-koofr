@@ -19,16 +19,6 @@ public class Bundle implements JsonBase, Serializable {
     public String path;
   }
   
-  public static class BundleVaultRepo implements JsonBase, Serializable {
-    private static final long serialVersionUID = 1L;
-
-    public String id;
-    public String mountId;
-    public String name;
-    public String path;
-    public Long added;
-  }
-
   public static class BundleFile implements JsonBase, Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -43,7 +33,7 @@ public class Bundle implements JsonBase, Serializable {
     public Link link;
     public Receiver receiver;
     public BundleBookmark bookmark;
-    public BundleVaultRepo vaultRepo;
+    public VaultRepo vaultRepo;
   }
   
   public BundleFile file;
