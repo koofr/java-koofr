@@ -75,6 +75,7 @@ public class Mounts implements JsonBase, Serializable {
     public Boolean isPrimary, isDir;
     public Boolean canWrite, canUpload;
     public Boolean overQuota, almostOverQuota;
+    public String deviceId;
   }
 
 }
