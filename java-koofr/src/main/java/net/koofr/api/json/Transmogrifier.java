@@ -218,6 +218,8 @@ public class Transmogrifier {
         rv.put(m.getName(), genericJsonResponse(sv));
       }
       return rv;
+    } else if(v.isNull()) {
+      return null;
     } else {
       throw new JsonException("Unsupported type: " + v + " (" + v.getClass().getName() + ")");
     }
