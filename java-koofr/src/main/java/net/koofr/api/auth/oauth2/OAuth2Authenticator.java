@@ -22,6 +22,7 @@ public class OAuth2Authenticator implements Authenticator {
   String refreshToken;
   String accessToken;
   Date accessExpiration;
+  String server;
   
   private static final int EXPIRATION_GUARD = 60*1000;
   
@@ -41,10 +42,12 @@ public class OAuth2Authenticator implements Authenticator {
       String r = o.getString("refresh_token", null);
       String a = o.getString("access_token", null);
       long x = o.getLong("expires_in", 0);
+      String s = o.getString("server", null);
       if(r != null && a != null && x > 0) {
         refreshToken = r;
         accessToken = a;
         accessExpiration = new Date(new Date().getTime() + x*1000 - EXPIRATION_GUARD);
+        server = s;
       }      
     } catch(Exception ex) {
       throw new IOException("Bad token response: " + o.toString(), ex);
@@ -83,6 +86,9 @@ public class OAuth2Authenticator implements Authenticator {
     } else {
       /* well, we'll try without authentication then */
     }
+    if (server != null) {
+      request.setServer(server);
+    }
   }
 
   public String getRefreshToken() {
@@ -101,5 +107,9 @@ public class OAuth2Authenticator implements Authenticator {
   
   public Date getExpirationDate() {
     return accessExpiration;
+  }
+
+  public String getServer() {
+    return server;
   }
 }

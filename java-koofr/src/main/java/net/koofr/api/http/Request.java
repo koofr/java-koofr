@@ -23,6 +23,8 @@ public interface Request {
   void setHeaders(Map<String, String> headers);
   void addHeader(String name, String value);
 
+  void setServer(String server) throws IOException;
+
   Response execute() throws IOException;
   Response execute(Body body) throws IOException;
   Response execute(Body body, TransferCallback cb) throws IOException;

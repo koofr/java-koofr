@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.List;
 import java.util.Map;
 
 public class BasicRequest implements Request {
@@ -39,6 +41,33 @@ public class BasicRequest implements Request {
   @Override
   public void addHeader(String name, String value) {
     cnx.setRequestProperty(name, value);
+  }
+
+  @Override
+  public void setServer(String server) throws IOException {
+    URL serverURL = new URL(server);
+    URL originalURL = cnx.getURL();
+
+    URL newURL = new URL(serverURL.getProtocol(), serverURL.getHost(), originalURL.getPort(), originalURL.getFile());
+
+    HttpURLConnection newConnection = (HttpURLConnection) newURL.openConnection();
+
+    newConnection.setRequestMethod(cnx.getRequestMethod());
+
+    Map<String, List<String>> headerFields = cnx.getRequestProperties();
+    for (Map.Entry<String, List<String>> entry : headerFields.entrySet()) {
+      String headerName = entry.getKey();
+      if (headerName != null) {
+        for (String headerValue : entry.getValue()) {
+          newConnection.addRequestProperty(headerName, headerValue);
+        }
+      }
+    }
+
+    newConnection.setConnectTimeout(cnx.getConnectTimeout());
+    newConnection.setReadTimeout(cnx.getReadTimeout());
+
+    cnx = newConnection;
   }
 
   @Override
