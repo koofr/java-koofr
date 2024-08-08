@@ -3,7 +3,7 @@ plugins {
     id 'maven-publish'
 }
 
-version = '3.8.5'
+version = '3.8.6'
 
 tasks.named('jar') {
     manifest {
@@ -13,8 +13,8 @@ tasks.named('jar') {
 }
 
 compileJava {
-    sourceCompatibility = 7
-    targetCompatibility = 7
+    sourceCompatibility = 8
+    targetCompatibility = 8
 }
 
 repositories {

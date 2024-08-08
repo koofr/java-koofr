@@ -5,6 +5,7 @@ import net.koofr.api.rest.v2.data.Common.StringList;
 import net.koofr.api.rest.v2.data.Links.Link;
 import net.koofr.api.rest.v2.data.Mounts.Mount;
 import net.koofr.api.rest.v2.data.Receivers.Receiver;
+import net.koofr.api.util.U;
 
 import java.io.Serializable;
 import java.util.List;
@@ -29,8 +30,39 @@ public class SearchResult implements JsonBase, Serializable {
     public Link link;
     public Receiver receiver;
     public VaultRepo vaultRepo;
+
+    @Override
+    public boolean equals(Object obj) {
+      if(obj == null || !(obj instanceof SearchHit)) {
+        return false;
+      }
+      SearchHit o = (SearchHit)obj;
+      return U.safeEq(mountId, o.mountId) &&
+        U.safeEq(path, o.path) &&
+        U.safeEq(score, o.score) &&
+        U.safeEq(name, o.name) &&
+        U.safeEq(type, o.type) &&
+        U.safeEq(modified, o.modified) &&
+        U.safeEq(size, o.size) &&
+        U.safeEq(contentType, o.contentType) &&
+        U.safeEq(tags, o.tags) &&
+        U.safeEq(mount, o.mount) &&
+        U.safeEq(link, o.link) &&
+        U.safeEq(receiver, o.receiver) &&
+        U.safeEq(vaultRepo, o.vaultRepo);
+    }
   }
   
   public List<SearchHit> hits;
   public Map<String, Mount> mounts;
+
+  @Override
+  public boolean equals(Object obj) {
+    if(obj == null || !(obj instanceof SearchResult)) {
+      return false;
+    }
+    SearchResult o = (SearchResult)obj;
+    return U.safeEq(hits, o.hits) &&
+      U.safeEq(mounts, o.mounts);
+  }
 }
