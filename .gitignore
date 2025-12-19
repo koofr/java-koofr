@@ -7,3 +7,8 @@ local.properties
 
 # Ignore Gradle build output directory
 build
+
+examples/cmdline/bin/
+examples/info/bin/
+java-koofr/bin/
+
