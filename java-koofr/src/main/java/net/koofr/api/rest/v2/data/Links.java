@@ -9,8 +9,20 @@ import java.util.List;
 public class Links implements JsonBase, Serializable {
   private static final long serialVersionUID = 1L;
 
-  public static class Link extends BaseLink implements Serializable {
+  public static class Link extends BaseLink {
     private static final long serialVersionUID = 1L;
+
+    public Boolean downloadable;
+
+    @Override
+    public boolean equals(Object obj) {      
+      if(obj == null || !(obj instanceof Link)) {
+        return false;
+      }
+      Link o = (Link)obj;
+      return super.equals(obj) &&
+        U.safeEq(downloadable, o.downloadable);
+    }
   }
 
   public List<Link> links;  

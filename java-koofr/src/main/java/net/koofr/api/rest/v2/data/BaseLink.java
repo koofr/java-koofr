@@ -22,6 +22,9 @@ public class BaseLink implements JsonBase, Serializable {
     public Long validFrom;
     public Long validTo;
     public Boolean passwordRequired;
+    public String passwordRequiredReason;
+    public Long created;
+    public String message;
 
     @Override
     public boolean equals(Object obj) {
@@ -42,7 +45,10 @@ public class BaseLink implements JsonBase, Serializable {
         U.safeEq(password, o.password) &&
         U.safeEq(validFrom, o.validFrom) &&
         U.safeEq(validTo, o.validTo) &&
-        U.safeEq(passwordRequired, o.passwordRequired);
+        U.safeEq(passwordRequired, o.passwordRequired) &&
+        U.safeEq(passwordRequiredReason, o.passwordRequiredReason) &&
+        U.safeEq(created, o.created) &&
+        U.safeEq(message, o.message);
     }
 
   }

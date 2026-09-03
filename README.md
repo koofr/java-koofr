@@ -88,6 +88,6 @@ And declare your dependency with
 
 ```
 dependencies {
-    implementation 'net.koofr:java-koofr:3.8.4'
+    implementation 'net.koofr:java-koofr:3.8.8'
 }
 ```

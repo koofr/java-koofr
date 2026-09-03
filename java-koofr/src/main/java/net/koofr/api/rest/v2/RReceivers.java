@@ -1,124 +1,47 @@
 package net.koofr.api.rest.v2;
 
+import java.io.IOException;
+
 import net.koofr.api.json.JsonBase;
 import net.koofr.api.json.JsonException;
-import net.koofr.api.rest.v2.data.Receivers;
 import net.koofr.api.rest.v2.data.Receivers.Receiver;
+import net.koofr.api.rest.v2.data.Receivers;
 
-import java.io.IOException;
-import java.util.Date;
-
-public class RReceivers extends Resource {
+public class RReceivers extends RGenericLinks<Receivers, Receivers.Receiver> {
   
   public RReceivers(RMounts.RMount parent) {
-    super(parent, "/receivers");
+    super(parent, Receivers.class, Receivers.Receiver.class, "/receivers");
   }
 
-  public Receivers get() throws IOException, JsonException {
-    return getResult(Receivers.class);
-  }
-  
-  public static class ReceiverCreate implements JsonBase {
-    public String path;
-  }
-  
-  public Receiver create(String path) throws IOException, JsonException {
-    ReceiverCreate c = new ReceiverCreate();
-    c.path = path;
-    return postJsonResult(c, Receiver.class);
-  }
-  
-  public static class RReceiver extends Resource {
+  public static class RReceiver extends RGenericLink<Receivers.Receiver> {
     public RReceiver(RReceivers parent, String id) {
-      super(parent, "/" + id);
+      super(parent, id);
     }
-    
-    public Receiver get() throws IOException, JsonException {
-      return getResult(Receiver.class);
+
+    public static class ReceiverAlert implements JsonBase {
+      public Boolean alert;
     }
-    
-    public void delete() throws IOException, JsonException {
-      deleteNoResult();
-    }
-    
-    public static class ReceiverSetHash implements JsonBase {
-      public String hash;
-    }
-    
-    private static class RReceiverUrlHash extends Resource {
-      public RReceiverUrlHash(RReceiver parent) {
-        super(parent, "/urlHash");
+
+    private static class RReceiverAlert extends Resource {
+      public RReceiverAlert(RReceiver parent) {
+        super(parent, "/alert");
       }
-      
-      public Receiver set(String hash) throws IOException, JsonException {
-        ReceiverSetHash h = new ReceiverSetHash();
-        h.hash = hash;        
-        return putJsonResult(h, Receiver.class);
-      }
-    }
-    
-    public Receiver setHash(String hash) throws IOException, JsonException {
-      return new RReceiverUrlHash(this).set(hash);
-    }
-    
-    private static class RReceiverPasswordReset extends Resource {
-      public RReceiverPasswordReset(RReceiverPassword parent) {
-        super(parent, "/reset");
-      }
-      
-      public Receiver reset() throws IOException, JsonException {
-        return putJsonResult(Receiver.class);
+
+      public Receiver set(boolean alert) throws IOException, JsonException {
+        ReceiverAlert ra = new ReceiverAlert();
+        ra.alert = alert;
+
+        return putJsonResult(ra, Receiver.class);
       }
     }
 
-    public static class RReceiverPassword extends Resource {
-      public RReceiverPassword(RReceiver parent) {
-        super(parent, "/password");
-      }
-      
-      public Receiver delete() throws IOException, JsonException {
-        return deleteResult(Receiver.class);
-      }
-      
-      public Receiver reset() throws IOException, JsonException {
-        return new RReceiverPasswordReset(this).reset();
-      }
+    public Receiver setAlert(boolean alert) throws IOException, JsonException {
+      return new RReceiverAlert(this).set(alert);
     }
 
-    public RReceiverPassword password() {
-      return new RReceiverPassword(this);
-    }
-
-    public static class ReceiverValidity implements JsonBase {
-      public Long validFrom;
-      public Long validTo;
-    }
-    
-    private static class RReceiverValidity extends Resource {
-      public RReceiverValidity(RReceiver parent) {
-        super(parent, "/validity");
-      }
-      
-      public Receiver set(Date from, Date to) throws IOException, JsonException {
-        ReceiverValidity v = new ReceiverValidity();
-        if(null != from) {
-          v.validFrom = from.getTime();
-        }
-        if(null != to) {
-          v.validTo = to.getTime();
-        }
-        return putJsonResult(v, Receiver.class);
-      }
-    }
-    
-    public Receiver setValidity(Date from, Date to) throws IOException, JsonException {
-      return new RReceiverValidity(this).set(from, to);
-    }
-    
   }
-  
+
   public RReceiver receiver(String id) {
-    return new RReceiver(this, id);    
+    return new RReceiver(this, id);
   }
-  
 }
