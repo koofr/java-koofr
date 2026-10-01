@@ -178,7 +178,7 @@ public class RGenericLinks<LS, L> extends Resource {
       return new RGenericLinkValidity<>(this).set(from, to);
     }
 
-    private static class RLinkQR<L> extends Resource {
+    private static class RLinkQR<L> extends RGenericLinkSub<L> {
       public RLinkQR(RGenericLink<L> parent) {
         super(parent, "/qr");
       }
@@ -191,6 +191,24 @@ public class RGenericLinks<LS, L> extends Resource {
 
     public DownloadResult getQR() throws IOException {
       return new RLinkQR<>(this).get();
+    }
+
+    public static class LinkCounter implements JsonBase {
+      public Integer counter;
+    }
+  
+    private static class RLinkCounter<L> extends RGenericLinkSub<L> {
+      public RLinkCounter(RGenericLink<L> parent) {
+        super(parent, "/counter");
+      }
+
+      public LinkCounter get() throws IOException, JsonException {
+        return getResult(LinkCounter.class);
+      }
+    }
+  
+    public int getCounter() throws IOException, JsonException {
+      return new RLinkCounter<>(this).get().counter.intValue();
     }
   }
   
